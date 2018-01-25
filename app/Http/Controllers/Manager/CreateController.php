@@ -37,6 +37,7 @@ class CreateController extends Controller
     	$idcluster = $req->input('INPUTCLUSTER');
     	$idservice = $req->input('INPUTSERVICE');
     	$tanggalrequest = $req->input('REQUESTDATE');
+    	$button = $req->input('output');
     	//dd($tanggalrequest);
     	$date = DateTime::createFromFormat('D M d Y', $tanggalrequest);
 	    $date_format = $date->format("Y-m-d");
@@ -47,19 +48,21 @@ class CreateController extends Controller
     		"area" => $idarea,
     		"regional" => $idregional,
     		"branch" => $idbranch,
-    		"cluster" => $idcluster);
+    		"cluster" => $idcluster,
+    		"button" => $button);
     	// dd($detail);
 	    $data['result'] = app('App\Http\Controllers\Manager\ReadController')->calculate($detail,$date_formated);
 	   	$data['detail'] = $detail;
-	    if($idarea=='all'){
+	    if($idarea=='all' && $detail['button']=='L1'){
 	    	$data['tipe'] = 'L1';
 	    }
-	    else if($idcluster!='all' && $idcluster!=null && $req->input('output')=='TOP5'){
+	    else if($detail['button']=='TOP5'){
 	    	$data['tipe'] = 'TOP5';
 	    	// dd($data['results']);
 	    	return view('manager.chart', $data);
 	    }
-	    else if($idcluster!='all' && $idcluster!=null){
+	    else if($button=='L3'){
+	    	// dd('masuk');
 	    	$data['tipe'] = 'L3';
 	    	// dd($data['result']);
 	    }

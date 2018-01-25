@@ -93,16 +93,16 @@
                     {
                         $("#L1Button").prop('disabled', false);
                         $("#service").prop('disabled', true);
-                        $("#L3Button").prop('disabled', true);
-                        $("#TOP5Button").prop('disabled', true);
+                        //$("#L3Button").prop('disabled', true);
+                        //$("#TOP5Button").prop('disabled', true);
                     }
                     return;
                 }
                 if(nexttarget == 'service')
                 {
                     $("#L1Button").prop('disabled', true);
-                    $("#L3Button").prop('disabled', false);
-                    $("#TOP5Button").prop('disabled', false);
+                    //$("#L3Button").prop('disabled', false);
+                    //$("#TOP5Button").prop('disabled', false);
                 }
                 $.ajax({
                   url: "{{url('/type')}}?nexttarget="+nexttarget+"&id="+ID,

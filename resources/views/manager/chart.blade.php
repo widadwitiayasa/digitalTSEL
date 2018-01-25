@@ -129,11 +129,11 @@ Highcharts.chart('mychart', {
     },
     series: [{
         name: '{{$result[0][0]['now']}}',
-        data: [@foreach($result[1] as $r) {{$r['actual']}}, @endforeach]
+        data: [@foreach($result[1] as $r) {{$r['mom']}}, @endforeach]
     }, 
     {
         name: '{{$result[0][0]['now_bulanlalu']}}',
-        data: [@foreach($result[1] as $r) {{$r['actual_bulanlalu']}}, @endforeach]
+        data: [@foreach($result[1] as $r) {{$r['mom_bulanlalu']}}, @endforeach]
     }]
     });
 

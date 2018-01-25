@@ -73,9 +73,9 @@
                                         </div> -->
                                         <button type="submit" class="btn btn-primary tm-btn-search" id="L1Button" name="output" value="L1" disabled>GET L1</button>
 
-                                        <button type="submit" class="btn btn-primary tm-btn-search" id="L3Button" name="output" value="L3" disabled>GET L3</button>
+                                        <button type="submit" class="btn btn-primary tm-btn-search" id="L3Button" name="output" value="L3">GET L3</button>
 
-                                        <button type="submit" class="btn btn-primary tm-btn-search" id="TOP5Button" name="output" value="TOP5" disabled>SHOW ME TOP V</button>
+                                        <button type="submit" class="btn btn-primary tm-btn-search" id="TOP5Button" name="output" value="TOP5">SHOW ME TOP V</button>
                                     </div>
                                     </div>
                                 </form>                  

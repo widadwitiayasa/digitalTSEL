@@ -19,4 +19,9 @@ class Cluster extends Model
     {
     	return $this->hasMany('App\Models\Target','ID','ID_CLUSTER');
     }
+
+    public function myBranch()
+    {
+        return $this->belongsTo('App\Models\Branch', 'ID_BRANCH', 'ID');
+    }
 }
