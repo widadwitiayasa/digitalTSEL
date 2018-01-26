@@ -120,44 +120,78 @@ class ReadController extends Controller
 		//get all regional list in those area selected
 		else if($detail['regional']=='all')
 		{
-			$regionals = Regional::where('ID_AREA',3)->get();
-			$all_regional_result = array();
-			$all_branch_result = array();
-			$all_cluster_result = array();
-			$date_data['skrg']=$date_data['now'];
-			$date_data['post_real']=$date_data['post'];
-			foreach($regionals as $r)
+			if($detail['button']=='L1')
 			{
-				//UNTUK REGIONAL
-				$date_data['now']=$date_data['skrg'];
-				$date_data['post']=$date_data['post_real'];
-
-				//UNTUK TIAP BRANCHNYA
-				$branchs = Branch::where('ID_REGIONAL',$r->ID)->get();
-				foreach($branchs as $b)
+				$regionals = Regional::where('ID_AREA',3)->get();
+				$all_regional_result = array();
+				$all_branch_result = array();
+				$all_cluster_result = array();
+				$date_data['skrg']=$date_data['now'];
+				$date_data['post_real']=$date_data['post'];
+				foreach($regionals as $r)
 				{
-					//UNTUK CLUSTER
-					$clusters = Cluster::where('ID_BRANCH',$b->ID)->get();
-					foreach($clusters as $c)
+					//UNTUK REGIONAL
+					$date_data['now']=$date_data['skrg'];
+					$date_data['post']=$date_data['post_real'];
+
+					//UNTUK TIAP BRANCHNYA
+					$branchs = Branch::where('ID_REGIONAL',$r->ID)->get();
+					foreach($branchs as $b)
 					{
+						//UNTUK CLUSTER
+						$clusters = Cluster::where('ID_BRANCH',$b->ID)->get();
+						foreach($clusters as $c)
+						{
+							$date_data['now']=$date_data['skrg'];
+							$date_data['post']=$date_data['post_real'];
+
+							$target = $this->getTarget('cluster',$c->ID);
+							$actual = $this->countActual('cluster',$c->ID, $date_data);
+							$GAP = $target - $actual;
+							$achievement = round((($actual/$target)*100),2);
+							$MOM = $this->countMom('cluster',$c->ID, $date_data);
+							$YTD = $this->countYtd('cluster',$c->ID, $date_data);
+							$YOY = $this->countYoy('cluster',$c->ID, $date_data);
+
+							$date_data['now'] = $date_data['now_bulanlalu'];
+							$date_data['post'] = $date_data['post_bulanlalu'];
+
+							$actual_bulanlalu = $this->countActual('cluster', $c->ID, $date_data);
+
+							$temp = array(
+								'name'=>$c['NAMA'],
+								'mom'=>$MOM,
+								'ytd'=>$YTD,
+								'actual'=>$actual,
+								'yoy'=>$YOY,
+								'target'=>$target,
+								'actual_bulanlalu'=>$actual_bulanlalu,
+								'now_bulanlalu'=>$date_data['now_bulanlalu'],
+								'now'=>$date_data['skrg'],
+								'GAP'=>$GAP,
+								'achievement'=>$achievement
+							);
+							array_push($all_cluster_result,$temp);	
+						}
+						// dd($clusters);
 						$date_data['now']=$date_data['skrg'];
 						$date_data['post']=$date_data['post_real'];
 
-						$target = $this->getTarget('cluster',$c->ID);
-						$actual = $this->countActual('cluster',$c->ID, $date_data);
+						$target = $this->getTarget('branch',$b->ID);
+						$actual = $this->countActual('branch',$b->ID, $date_data);
 						$GAP = $target - $actual;
 						$achievement = round((($actual/$target)*100),2);
-						$MOM = $this->countMom('cluster',$c->ID, $date_data);
-						$YTD = $this->countYtd('cluster',$c->ID, $date_data);
-						$YOY = $this->countYoy('cluster',$c->ID, $date_data);
+						$MOM = $this->countMom('branch',$b->ID, $date_data);
+						$YTD = $this->countYtd('branch',$b->ID, $date_data);
+						$YOY = $this->countYoy('branch',$b->ID, $date_data);
 
 						$date_data['now'] = $date_data['now_bulanlalu'];
 						$date_data['post'] = $date_data['post_bulanlalu'];
 
-						$actual_bulanlalu = $this->countActual('cluster', $c->ID, $date_data);
+						$actual_bulanlalu = $this->countActual('branch', $b->ID, $date_data);
 
 						$temp = array(
-							'name'=>$c['NAMA'],
+							'name'=>$b['NAMA'],
 							'mom'=>$MOM,
 							'ytd'=>$YTD,
 							'actual'=>$actual,
@@ -169,27 +203,38 @@ class ReadController extends Controller
 							'GAP'=>$GAP,
 							'achievement'=>$achievement
 						);
-						array_push($all_cluster_result,$temp);	
+						array_push($all_branch_result,$temp);	
 					}
-					// dd($clusters);
+
 					$date_data['now']=$date_data['skrg'];
 					$date_data['post']=$date_data['post_real'];
-
-					$target = $this->getTarget('branch',$b->ID);
-					$actual = $this->countActual('branch',$b->ID, $date_data);
+					$target = $this->getTarget('regional',$r->ID);
+					$actual = $this->countActual('regional',$r->ID, $date_data);
 					$GAP = $target - $actual;
 					$achievement = round((($actual/$target)*100),2);
-					$MOM = $this->countMom('branch',$b->ID, $date_data);
-					$YTD = $this->countYtd('branch',$b->ID, $date_data);
-					$YOY = $this->countYoy('branch',$b->ID, $date_data);
+					$MOM = $this->countMom('regional',$r->ID, $date_data);
+					$YTD = $this->countYtd('regional',$r->ID, $date_data);
+					$YOY = $this->countYoy('regional',$r->ID, $date_data);
+
+					
+
+					$target = $this->getTarget('regional',$r->ID);
+					$actual = $this->countActual('regional',$r->ID, $date_data);
+					$GAP = $target - $actual;
+					$achievement = round((($actual/$target)*100),2);
+					$MOM = $this->countMom('regional',$r->ID, $date_data);
+					$YTD = $this->countYtd('regional',$r->ID, $date_data);
+					$YOY = $this->countYoy('regional',$r->ID, $date_data);
+
 
 					$date_data['now'] = $date_data['now_bulanlalu'];
 					$date_data['post'] = $date_data['post_bulanlalu'];
 
-					$actual_bulanlalu = $this->countActual('branch', $b->ID, $date_data);
 
+					$actual_bulanlalu = $this->countActual('regional', $r->ID, $date_data);
+					
 					$temp = array(
-						'name'=>$b['NAMA'],
+						'name'=>$r['NAMA'],
 						'mom'=>$MOM,
 						'ytd'=>$YTD,
 						'actual'=>$actual,
@@ -200,54 +245,75 @@ class ReadController extends Controller
 						'now'=>$date_data['skrg'],
 						'GAP'=>$GAP,
 						'achievement'=>$achievement
-					);
-					array_push($all_branch_result,$temp);	
+						);
+					array_push($all_regional_result,$temp);
+
 				}
-
-				$date_data['now']=$date_data['skrg'];
-				$date_data['post']=$date_data['post_real'];
-				$target = $this->getTarget('regional',$r->ID);
-				$actual = $this->countActual('regional',$r->ID, $date_data);
-				$GAP = $target - $actual;
-				$achievement = round((($actual/$target)*100),2);
-				$MOM = $this->countMom('regional',$r->ID, $date_data);
-				$YTD = $this->countYtd('regional',$r->ID, $date_data);
-				$YOY = $this->countYoy('regional',$r->ID, $date_data);
-
-				
-
-				$target = $this->getTarget('regional',$r->ID);
-				$actual = $this->countActual('regional',$r->ID, $date_data);
-				$GAP = $target - $actual;
-				$achievement = round((($actual/$target)*100),2);
-				$MOM = $this->countMom('regional',$r->ID, $date_data);
-				$YTD = $this->countYtd('regional',$r->ID, $date_data);
-				$YOY = $this->countYoy('regional',$r->ID, $date_data);
-
-
-				$date_data['now'] = $date_data['now_bulanlalu'];
-				$date_data['post'] = $date_data['post_bulanlalu'];
-
-
-				$actual_bulanlalu = $this->countActual('regional', $r->ID, $date_data);
-				
-				$temp = array(
-					'name'=>$r['NAMA'],
-					'mom'=>$MOM,
-					'ytd'=>$YTD,
-					'actual'=>$actual,
-					'yoy'=>$YOY,
-					'target'=>$target,
-					'actual_bulanlalu'=>$actual_bulanlalu,
-					'now_bulanlalu'=>$date_data['now_bulanlalu'],
-					'now'=>$date_data['skrg'],
-					'GAP'=>$GAP,
-					'achievement'=>$achievement
-					);
-				array_push($all_regional_result,$temp);
-
+				return ([$all_regional_result,0, $all_branch_result, $all_cluster_result]);
 			}
-			return ([$all_regional_result,0, $all_branch_result, $all_cluster_result]);
+			else
+			{
+				$service = Revenue::with('fromService')->whereHas('cluster', function($a) use($detail){
+							$a->whereHas('branch', function($b) use($detail){
+								$b->whereHas('regional', function($c) use($detail){
+									$c->whereHas('area', function($d) use($detail){
+										$d->where('ID_AREA',$detail['area']);
+									});
+								});
+							});
+						})->whereDate('DATE','>=',$date_data['post'])->whereDate('Date', '<=', $date_data['now'])
+						->get();
+				// dd($service);
+				$all_service_result = array();
+
+				$date_data['skrg']=$date_data['now'];
+				$date_data['post_real']=$date_data['post'];
+				$a = $date_data['mom1'];
+				$b = $date_data['mom2'];
+				
+				foreach($service as $s)
+				{
+					$date_data['post']=$date_data['post_real'];
+					$date_data['now']=$date_data['skrg'];
+					$date_data['mom1']=$a;
+					$date_data['mom2']=$b;
+
+					$name = $s->fromService->NAMA;
+					$actual = $this->countActual('area',$s->ID_SERVICE, $date_data, $detail['area'], $detail['button']);
+					$MOM = $this->countMom('area',$s->ID_SERVICE, $date_data, $detail['area'], $detail['button']);
+
+					$date_data['mom1'] = $date_data['mom1_bulanlalu'];
+					$date_data['mom2'] = $date_data['mom2_bulanlalu'];
+
+					$date_data['post'] = $date_data['post_bulanlalu'];
+					$date_data['now'] = $date_data['now_bulanlalu'];
+
+					$actual_bulanlalu = $this->countActual('area', $s->ID_SERVICE, $date_data, $detail['area'], $detail['button']);
+					$MOM_bulanlalu = $this->countMom('area',$s->ID_SERVICE, $date_data, $detail['area'], $detail['button']);;
+					$absolut = $actual - $actual_bulanlalu;
+					$temp = array(
+						'name'=>$name,
+						'mom'=>$MOM,
+						'actual'=>$actual,
+						'mom_bulanlalu'=>$MOM_bulanlalu,
+						'actual_bulanlalu'=>$actual_bulanlalu,
+						'now_bulanlalu'=>$date_data['now_bulanlalu'],
+						'now'=>$date_data['skrg'],
+						'absolut'=>$absolut
+						);
+					$check = 1;
+					foreach($all_service_result as $r)
+					{
+						if($r['name'] == $temp['name'])	$check = 0;
+					}
+					if($check)
+						array_push($all_service_result,$temp);
+				}
+				$all_service_result = collect($all_service_result)->sortBy('mom')->reverse()->toArray();
+				$topv = array_slice($all_service_result, 0, 5, true);
+				// dd($all_service_result);
+				return ([$all_service_result,$topv]);
+			}
 		}
 
 		//get all branch list in those regional selected
@@ -557,7 +623,7 @@ class ReadController extends Controller
 						if($output == 'L3')
 							$b->where('ID_SERVICE', $target);
 					}
-						else 	$b->whereHas('regional', function($c) use($target, $type, $date, $target2, $output){
+						else $b->whereHas('regional', function($c) use($target, $type, $date, $target2, $output){
 							if($type == 'regional') 
 							{
 								if($target2 == null) $target2=$target;
@@ -565,8 +631,11 @@ class ReadController extends Controller
 								if($output == 'L3')
 									$c->where('ID_SERVICE', $target);
 							}
-							else 	$c->whereHas('area', function($d) use($target, $type, $date){
-								$d->where('ID', $target);
+							else $c->whereHas('area', function($d) use($target, $type, $date, $target2, $output){
+								if($target2 == null) $target2=$target;
+									$d->where('ID', $target2);
+								if($output == 'L3')
+									$d->where('ID_SERVICE',$target);
 							});
 						});
 					});
@@ -678,8 +747,11 @@ class ReadController extends Controller
 								if($output == 'L3')
 									$c->where('ID_SERVICE',$target);
 							}
-						else $c->whereHas('area', function($d) use($target, $type, $date){
-							$d->where('ID', $target);
+						else $c->whereHas('area', function($d) use($target, $type, $date, $target2, $output){
+							if($target2 == null) $target2 = $target;
+									$d->where('ID', $target2);
+							if($output == 'L3')
+									$d->where('ID_SERVICE',$target);
 						});
 					});
 				});
@@ -710,8 +782,11 @@ class ReadController extends Controller
 								if($output == 'L3')
 									$c->where('ID_SERVICE',$target);
 							}
-						else $c->whereHas('area', function($d) use($target, $type, $date){
-							$d->where('ID', $target);
+						else $c->whereHas('area', function($d) use($target, $type, $date, $target2, $output){
+							if($target2 == null) $target2=$target;
+								$d->where('ID', $target2);
+							if($output == 'L3')
+								$d->where('ID_SERVICE',$target);
 						});
 					});
 				});
