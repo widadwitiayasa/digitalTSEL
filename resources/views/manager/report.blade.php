@@ -69,7 +69,7 @@
                                         <td>{{ number_format($r['actual'], 0, ".", ".") }}</td>
                                         <td>{{$r['mom']}}{{ '%' }}</td>
                                         @if($r['mom']<0) <td style="background-color: red">{{$r['absolut']}}{{ '%' }}</td>
-                                        @else <td>{{$r['absolut']}}{{ '%' }}</td>
+                                        @else <td>{{$r['absolut']}}</td>
                                         @endif
                                 @endif
                                     </tr>

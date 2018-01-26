@@ -15,7 +15,6 @@
                 <div class="col-lg-10 text-center" style="padding-left: 0px;">
 
         <div id="mychart" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto; padding: 20px"></div>
-
                     <table class="table table-hover table-bordered table-striped tm-position-relative" style="background-color: #E8E8E8">
                             <thead>
                                 <tr>
@@ -77,6 +76,7 @@
         </div>
 
 <script>
+
 Highcharts.chart('mychart', {
     chart: {
         type: 'bar'

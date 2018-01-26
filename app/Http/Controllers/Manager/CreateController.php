@@ -58,8 +58,7 @@ class CreateController extends Controller
 	    }
 	    else if($detail['button']=='TOP5'){
 	    	$data['tipe'] = 'TOP5';
-	    	// dd($data['results']);
-	    	return view('manager.chart', $data);
+	    	return view('manager.graph');
 	    }
 	    else if($button=='L3'){
 	    	// dd('masuk');
