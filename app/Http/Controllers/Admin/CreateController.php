@@ -15,13 +15,12 @@ use DateTime;
 
 class CreateController extends Controller
 {
-    public function uploadGET()
+    public function uploadGET(Request $req)
     {
         $data['Area'] = Area::get();
         $data['Regional'] = Regional::where('ID_AREA',3)->get();
         $data['Branch'] = Branch::get();
         $data['Cluster'] = Cluster::get();
-
         return view('admin.input', $data);
     }
     public function uploadPOST(Request $req)
@@ -39,8 +38,12 @@ class CreateController extends Controller
 
         $startdate = $req->input('UPLOADDATE');
         $finishdate = $req->input('FINISHDATE');
+        $terakhirdatedb = Revenue::where('ID_CLUSTER',$idcluster)->orderBy('date', 'desc')->first();
+        // dd($terakhirdatedb);
+
         $awal = strtotime($startdate);
         $akhir = strtotime($finishdate);
+        $terakhirdb = strtotime($terakhirdatedb['DATE']);
 
         $rangedate = $akhir - $awal;
         $rangedate = intval($rangedate/(60*60*24))+1;
@@ -49,6 +52,13 @@ class CreateController extends Controller
         $date_format = $date->format("Y-m-d");
         $date_formated = explode("-",$date_format);
 
+        $range = $awal-$terakhirdb;
+        $range = intval($range/(60*60*24));
+        // dd($range);
+        if($range>1)
+        {
+            dd("WRONG DATE");
+        }
 
         $filepath = $this->saveCSV($req,$date_formated,$date);
         $this->readCSV($filepath, $detail, $date_format, $rangedate);
@@ -76,12 +86,12 @@ class CreateController extends Controller
         if($filetype != "csv")
         {
 
-            return redirect('/storage')->with('status', 'Please upload csv file');
+            return redirect('/upload')->with('status', 'Please upload csv file');
         }
 
         if($filesize > 500000)
         {
-            return redirect('/storage')->with('status', 'Please check your file size');        	
+            return redirect('/upload')->with('status', 'Please check your file size');        	
         }
 
 // $target_dir = "storage/";
@@ -100,11 +110,11 @@ class CreateController extends Controller
         $hariini = $date_format;
         while(!feof($file))
         {
-            // dd($rangedate);
             $date_format = $hariini;
             $row = fgetcsv($file);
             if($header)//header ini biar ngga ngambil row paling atas di csv
             {
+                
                 $newService = Service::where('NAMA','like',$row[0])->first();
                 //echo $newService;
                 if(empty($newService))
@@ -115,19 +125,19 @@ class CreateController extends Controller
                 }
                 $newService = Service::where('NAMA','like',$row[0])->first();
                 $idNewService = $newService->ID;
-                // dd($newService->ID);
-                    //dd($newService->ID);
                 for($i=1; $i<=$rangedate; $i++)
                 {
 
                     $query = Revenue::where('ID_SERVICE',$idNewService)
                         ->where('ID_CLUSTER',$detail['cluster'])
                         ->where('DATE',$date_format)->first();
-                    $a=0;
-                    while($i<=$rangedate && $row[$i]=='' || $i<=$rangedate && $row[$i]==0) {   $i++; $a=1;  }
-                    if($a==1) break;
-                    else
-                    {
+
+                    if($row[$i]=='') 
+                        {
+                            $row[$i]=0;
+                        }
+
+                   
                         if(empty($query))
                         {
                             $newRevenue = new Revenue();
@@ -142,8 +152,8 @@ class CreateController extends Controller
                             $query = Revenue::where('ID_SERVICE',$idNewService)
                                 ->where('ID_CLUSTER',$detail['cluster'])
                                 ->where('DATE',$date_format)->update(array('REVENUE'=>$row[$i]));
+
                         }
-                    }
                     
                     
                     $besok = new DateTime($date_format);

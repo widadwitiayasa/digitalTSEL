@@ -165,5 +165,11 @@
                 </div>
             </div>                
         </footer>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                const aa = datepicker('#FINISHDATE');
+                
+            })
+        </script>
 @include('js')
 

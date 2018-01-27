@@ -25,7 +25,6 @@ class CreateController extends Controller
     	$data['Branch'] = Branch::get();
     	$data['Cluster'] = Cluster::get();
     	$data['Service'] = Service::get();
-
     	return view('manager.request', $data);
     }
     public function requestPOST(Request $req)
@@ -58,7 +57,7 @@ class CreateController extends Controller
 	    }
 	    else if($detail['button']=='TOP5'){
 	    	$data['tipe'] = 'TOP5';
-	    	return view('manager.graph');
+	    	return view('manager.chart',$data);
 	    }
 	    else if($button=='L3'){
 	    	// dd('masuk');
@@ -72,6 +71,45 @@ class CreateController extends Controller
 	    return view('manager.report',$data);
     }
 
+    public function ngecekDATE(Request $req, $target=null, $type=null)
+    {
+    	$ID = $req->target ? $req->target : $target;
+    	if($type == null)
+	    	$type = $req->type;
+
+    	$terakhirdatedb = Revenue::whereHas('cluster', function($a) use($ID, $type){
+			if($type == 'cluster')
+			{
+				if($ID != "all")
+					$a->where('ID', $ID);
+				else
+					$a->where('ID_BRANCH',$ID);
+			}
+			else if($type == 'branch')
+			{
+				$a->whereHas('branch', function($b) use($ID, $type){
+				if($ID != "all")
+					$b->where('ID',$ID);
+				else
+					$b->where('ID_REGIONAL',$ID);
+				});
+			}
+			else if($type == 'regional')
+			{
+				$a->whereHas('branch', function($b) use($ID, $type){
+						$b->whereHas('regional', function($c) use($ID, $type){
+							if($ID != "all")
+								$c->where('ID',$ID);
+							else
+								$c->where('ID_AREA',3);
+						});
+					});
+			}
+		})->orderBy('date', 'desc')->first();
+
+
+        return json_encode(['lastdate'=>$terakhirdatedb['DATE']]);
+    }
 
 
 

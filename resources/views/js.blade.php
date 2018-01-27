@@ -1,9 +1,11 @@
         <!-- load JS files -->
-        <script src="js/jquery-1.11.3.min.js"></script>             <!-- jQuery (https://jquery.com/download/) -->
+        <!-- <script src="js/jquery-1.11.3.min.js"></script>             <! jQuery (https://jquery.com/download/) -->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="js/popper.min.js"></script>                    <!-- https://popper.js.org/ -->       
         <script src="js/bootstrap.min.js"></script>                 <!-- https://getbootstrap.com/ -->
-        <script src="js/datepicker.min.js"></script>                <!-- https://github.com/qodesmith/datepicker -->
-        <script src="js/jquery.singlePageNav.min.js"></script>
+        <!-- <script src="js/datepicker.min.js"></script>                <!https://github.com/qodesmith/datepicker -->
+        <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+        <!-- <script src="js/jquery.singlePageNav.min.js"></script> -->
         <script src="js/chartist.min.js"</script>
               <!-- Single Page Nav (https://github.com/ChrisWojcik/single-page-nav) -->
         <script src="slick/slick.min.js"></script>                  <!-- http://kenwheeler.github.io/slick/ -->
@@ -15,7 +17,7 @@
             var center;
 
             $(document).ready(function(){
-                findType('all','branch', 'all');
+                findType('all', 'branch', 'all');
                 $(window).on("scroll", function() {
                     if($(window).scrollTop() > 100) {
                         $(".tm-top-bar").addClass("active");
@@ -26,16 +28,14 @@
                 });      
 
                 // Google Map
-                loadGoogleMap();  
+                // loadGoogleMap();  
 
                 // Date Picker
-                const upload = datepicker('#UPLOADDATE');
-                const aa = datepicker('#FINISHDATE');
-                
+                // const upload = datepicker('#UPLOADDATE');
                 
                 // Slick carousel
-                setCarousel();
-                setPageNav();
+                // setCarousel();
+                // setPageNav();
 
                 $(window).resize(function() {
                   setCarousel();
@@ -58,6 +58,8 @@
 
                 // Update the current year in copyright
                 $('.tm-current-year').text(new Date().getFullYear());
+                console.log("cek");
+                cekDate('regional', 'all');
 
             });
 
@@ -93,36 +95,53 @@
                     {
                         $("#L1Button").prop('disabled', false);
                         $("#service").prop('disabled', true);
+
                         //$("#L3Button").prop('disabled', true);
                         //$("#TOP5Button").prop('disabled', true);
                     }
-                    return;
-                }
-                if(nexttarget == 'service')
-                {
-                    $("#L1Button").prop('disabled', true);
-                    //$("#L3Button").prop('disabled', false);
-                    //$("#TOP5Button").prop('disabled', false);
-                }
-                $.ajax({
-                  url: "{{url('/type')}}?nexttarget="+nexttarget+"&id="+ID,
-                  dataType:'json'
-                })
-                  .done(function(wida) {
-                    if(type == 'all')
-                        var options = '<option value="all">All '+nexttarget+'</option>';
-                    else
-                        var options = '<option value="">Choose a '+nexttarget+'</option>';
 
-                    wida.forEach(function(e){
-                        options += '<option value="'+e.ID+'">'+e.NAMA+'</option>';
+                }
+                else
+                {
+                    if(nexttarget == 'service')
+                    {
+                        $("#L1Button").prop('disabled', true);
+                        //$("#L3Button").prop('disabled', false);
+                        //$("#TOP5Button").prop('disabled', false);
+                    }
+                    $.ajax({
+                      url: "{{url('/type')}}?nexttarget="+nexttarget+"&id="+ID,
+                      dataType:'json'
+                    })
+                      .done(function(wida) {
+                        if(type == 'all')
+                            var options = '<option value="all">All '+nexttarget+'</option>';
+                        else
+                            var options = '<option value="">Choose a '+nexttarget+'</option>';
+
+                        wida.forEach(function(e){
+                            options += '<option value="'+e.ID+'">'+e.NAMA+'</option>';
+                        });
+                        // console.log("masuk");
+                        // console.log(options);
+                        console.log(document.getElementById(nexttarget).innerHTML);
+                        document.getElementById(nexttarget).innerHTML = options; 
+                        $('#'+nexttarget).prop('disabled',false);
                     });
-                    // console.log("masuk");
-                    // console.log(options);
-                    console.log(document.getElementById(nexttarget).innerHTML);
-                    document.getElementById(nexttarget).innerHTML = options; 
-                    $('#'+nexttarget).prop('disabled',false);
-                  });
+                }
+            }
+            function cekDate(target, type)
+            {
+                console.log("masuk");
+                $.ajax({
+                            url: "{{url('/cekdate')}}?type="+target+"&target="+type,
+                            dataType: 'json'
+                    }).done(function(res){
+                        console.log(res);
+                        console.log($("#UPLOADDATE"));
+                        // $("#datepicker").datepicker();
+                        $("#datepicker").datepicker( { minDate: '-2Y', maxDate: new Date(res.lastdate) });
+                    });
             }
 
             function initialize() {

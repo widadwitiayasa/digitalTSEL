@@ -16,10 +16,7 @@
                                         {{csrf_field()}}
                                     </div>
                                     <div class="form-row tm-search-form-row">
-                                        <div class="form-group tm-form-element tm-form-element-100">
-                                            <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
-                                            <input name="REQUESTDATE" type="text" class="form-control" id="UPLOADDATE" placeholder="Request Date" required>
-                                        </div>
+                                       
                                         <div class="form-group tm-form-element tm-form-element-100">
                                             <select onchange="findType(this.value,'regional', 'all')" name="INPUTAREA" class="form-control tm-select" id="area" disabled>
                                                 <option value="1">Area 3</option>
@@ -60,17 +57,12 @@
                                             </select>
                                             <i class="fa fa-map-marker fa-fw fa-2x tm-form-element-icon"></i>
                                         </div>
-                                        <!-- <div class="form-group tm-form-element tm-form-element-100">
-                                            <select onchange="findType(this.value,'service')" name="INPUTSERVICE" class="form-control tm-select" id="service">
-                                                <option value="all">All Service</option>
-                                                <?php foreach($Service as $s)
-                                                { 
-                                                    echo '<option value="'.$s->ID.'">'.$s->NAMA.'</option>'; 
-                                                }
-                                                ?>
-                                            </select>
-                                            <i class="fa fa-map-marker fa-fw fa-2x tm-form-element-icon"></i>
-                                        </div> -->
+
+                                         <div class="form-group tm-form-element tm-form-element-100">
+                                            <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
+                                            <input name="REQUESTDATE" type="date" class="form-control" id="datepicker" placeholder="Request Date" required>
+                                        </div>
+
                                         <button type="submit" class="btn btn-primary tm-btn-search" id="L1Button" name="output" value="L1" disabled>GET L1</button>
 
                                         <button type="submit" class="btn btn-primary tm-btn-search" id="L3Button" name="output" value="L3">GET L3</button>

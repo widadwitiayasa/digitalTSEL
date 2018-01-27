@@ -33,7 +33,7 @@ Route::get('/target','Admin\TargetController@showTarget');
 Route::post('/target','Admin\TargetController@inputTarget');
 Route::post('/target/{ID}','Admin\TargetController@editTarget');
 Route::get('/download','Admin\DownloadController@downloadCSV');
-Route::get('/artikel','PostsController@store');
+Route::get('/cekdate','Manager\CreateController@ngecekDATE');
 
 Auth::routes();
 

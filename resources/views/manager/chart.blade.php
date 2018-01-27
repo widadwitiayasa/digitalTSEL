@@ -66,7 +66,7 @@
                                         <td>{{ number_format($r['actual_bulanlalu'], 0, ".", ".") }}</td>
                                         <td>{{ number_format($r['actual'], 0, ".", ".") }}</td>
                                         <td>{{$r['mom']}}{{ '%' }}</td>
-                                        <td>{{$r['absolut']}}</td>
+                                        <td>{{ number_format($r['absolut'], 0, ".", ".")  }}</td>
                                 @endif
                                     </tr>
                                 @endforeach
