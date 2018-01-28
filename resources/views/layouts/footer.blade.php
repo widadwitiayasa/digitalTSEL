@@ -17,7 +17,6 @@
         <script type="text/javascript" src="js/jquery-ui.min.js"></script>
         <script type="text/javascript" src="js/jquery.singlePageNav.min.js"></script> 
         <script type="text/javascript" src="js/chartist.min.js"></script>
-              Single Page Nav (https://github.com/ChrisWojcik/single-page-nav)
         <script src="js/slick/slick.min.js"></script>                  <!-- http://kenwheeler.github.io/slick/-->
         @yield('js')
         <script>

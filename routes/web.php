@@ -32,7 +32,9 @@ Route::get('/type','Manager\ReadController@findType');
 Route::get('/target','Admin\TargetController@showTarget');
 Route::post('/target','Admin\TargetController@inputTarget');
 Route::post('/target/{ID}','Admin\TargetController@editTarget');
-Route::get('/download','Admin\DownloadController@downloadCSV');
+
+Route::post('/download','Manager\UpdateController@array2csv');
+
 Route::get('/cekdate','Manager\CreateController@ngecekDATE');
 
 Auth::routes();

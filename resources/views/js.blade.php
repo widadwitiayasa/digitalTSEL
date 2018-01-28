@@ -7,7 +7,6 @@
         <script type="text/javascript" src="js/jquery-ui.min.js"></script>
         <!-- <script src="js/jquery.singlePageNav.min.js"></script> -->
         <script src="js/chartist.min.js"</script>
-              <!-- Single Page Nav (https://github.com/ChrisWojcik/single-page-nav) -->
         <script src="slick/slick.min.js"></script>                  <!-- http://kenwheeler.github.io/slick/ -->
         <script>
 

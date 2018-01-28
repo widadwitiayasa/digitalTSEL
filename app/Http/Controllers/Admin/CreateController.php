@@ -39,11 +39,24 @@ class CreateController extends Controller
         $startdate = $req->input('UPLOADDATE');
         $finishdate = $req->input('FINISHDATE');
         $terakhirdatedb = Revenue::where('ID_CLUSTER',$idcluster)->orderBy('date', 'desc')->first();
-        // dd($terakhirdatedb);
+        // dd($finishdate);
 
         $awal = strtotime($startdate);
         $akhir = strtotime($finishdate);
-        $terakhirdb = strtotime($terakhirdatedb['DATE']);
+
+        if($terakhirdatedb != null)
+        {        
+            $terakhirdb = strtotime($terakhirdatedb['DATE']);
+            // dd($terakhirdb);
+
+            $range = $awal-$terakhirdb;
+            $range = intval($range/(60*60*24));
+            // dd($range);
+            if($range>1)
+            {
+                dd("WRONG DATE");
+            }
+        }
 
         $rangedate = $akhir - $awal;
         $rangedate = intval($rangedate/(60*60*24))+1;
@@ -52,16 +65,9 @@ class CreateController extends Controller
         $date_format = $date->format("Y-m-d");
         $date_formated = explode("-",$date_format);
 
-        $range = $awal-$terakhirdb;
-        $range = intval($range/(60*60*24));
-        // dd($range);
-        if($range>1)
-        {
-            dd("WRONG DATE");
-        }
-
         $filepath = $this->saveCSV($req,$date_formated,$date);
-        $this->readCSV($filepath, $detail, $date_format, $rangedate);
+        return $this->readCSV($filepath, $detail, $date_format, $rangedate);
+
     }
     public function saveCSV($req,$date_formated,$date)
     {
@@ -112,6 +118,7 @@ class CreateController extends Controller
         {
             $date_format = $hariini;
             $row = fgetcsv($file);
+            if($row[0]=='') continue;
             if($header)//header ini biar ngga ngambil row paling atas di csv
             {
                 
@@ -136,7 +143,6 @@ class CreateController extends Controller
                         {
                             $row[$i]=0;
                         }
-
                    
                         if(empty($query))
                         {
@@ -164,6 +170,6 @@ class CreateController extends Controller
             $header = 1;
         }
         fclose($file);
-        return true;
+        return ('sukses');
     }
 }

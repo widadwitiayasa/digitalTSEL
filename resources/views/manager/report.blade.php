@@ -10,8 +10,11 @@
         </div>
         <div class="tm-section tm-bg-img" id="tm-section-1">
             <div class="row">
-                @if($detail['regional']=='all' && $detail['button']=='L1')\
-                    <!-- <button onclick="location.href='{{ url('download') }}'" type="button" class="btn btn-primary tm-btn-search" style="background-color: #000000">Download as CSV</button> -->
+                @if($detail['regional']=='all' && ($detail['button']=='L1' || $detail['button']=='L3'))
+                    <!-- <form action="{{url('/download')}}" method="post" class="tm-search-form tm-section-pad-2" enctype="multipart/form-data">
+                        <input type="hidden" value="{{$result[1]}}" name="INPUTRESULT"></input>
+                        <button type="submit" class="btn btn-primary tm-btn-search" style="background-color: #000000">Download as CSV</button>
+                    </form> -->
                     <!-- <a href="/all-tweets-csv" class="btn btn-primary">Export as CSV</a> -->
                     <?php for($i = 0; $i<=3; $i++){
                             if($i == 1) continue;
