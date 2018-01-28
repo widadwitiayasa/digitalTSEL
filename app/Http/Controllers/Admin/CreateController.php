@@ -40,6 +40,8 @@ class CreateController extends Controller
         $finishdate = $req->input('FINISHDATE');
         $terakhirdatedb = Revenue::where('ID_CLUSTER',$idcluster)->orderBy('date', 'desc')->first();
         // dd($finishdate);
+        // echo $startdate;
+        // echo $finishdate;
 
         $awal = strtotime($startdate);
         $akhir = strtotime($finishdate);
@@ -60,6 +62,7 @@ class CreateController extends Controller
 
         $rangedate = $akhir - $awal;
         $rangedate = intval($rangedate/(60*60*24))+1;
+        // dd($rangedate);
 
         $date = DateTime::createFromFormat('D M d Y', $startdate);
         $date_format = $date->format("Y-m-d");
