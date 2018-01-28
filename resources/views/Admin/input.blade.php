@@ -1,4 +1,10 @@
-@include('css')
+@extends('layouts.main')
+
+@section('title')
+Digital TSEL - Upload
+@endsection
+
+@section('content')
         <div class="tm-main-content" id="top">
              <header style="background-color: #FFFFFF">
                 <div class="container">
@@ -79,16 +85,77 @@
                         </div>      
                 </div>                  
             </div>
-            <footer style="background-color: #FFFFFF">
-                <div class="container">
-                    <div class="row">
-                        <p class="col-sm-12 text-center tm-color-black p-4 tm-margin-b-0">
-                        Copyright &copy; <span class="tm-current-year">2018</span> Your Company
-                        
-                        - Designed by <a href="http://www.tooplate.com" class="tm-color-primary tm-font-normal" target="_parent">Tooplate</a></p>        
-                    </div>
-                </div>                
-            </footer>
-@include('js')
-        
+@endsection
+@section('js')
+    <script type="text/javascript">
+        $(document).ready(function(){
+            const picker1 = datepicker('#UPLOADDATE');
+            const picker2 = datepicker('#FINISHDATE');
+        })    
+        function findType(ID,nexttarget,type){
+        if(ID == 'all' || ID == '')
+        {
 
+            if(nexttarget == 'regional')
+            {
+                console.log(type);
+                $("#regional").prop('disabled', true);
+                $("#branch").prop('disabled', true);
+                $("#cluster").prop('disabled', true);
+                $("#service").prop('disabled', true);
+                $("#L1Button").prop('disabled', false);
+            }
+            else if(nexttarget == 'branch')
+            {
+                $("#branch").prop('disabled', true);
+                $("#cluster").prop('disabled', true);
+                $("#service").prop('disabled', true);
+                $("#L1Button").prop('disabled', false);
+            }
+            else if(nexttarget == 'cluster')
+            {
+                $("#cluster").prop('disabled', true);
+                $("#service").prop('disabled', true);
+                $("#L1Button").prop('disabled', false);
+            }
+            else if(nexttarget == 'service')
+            {
+                $("#L1Button").prop('disabled', false);
+                $("#service").prop('disabled', true);
+
+                //$("#L3Button").prop('disabled', true);
+                //$("#TOP5Button").prop('disabled', true);
+            }
+
+        }
+        else
+        {
+            if(nexttarget == 'service')
+            {
+                $("#L1Button").prop('disabled', true);
+                //$("#L3Button").prop('disabled', false);
+                //$("#TOP5Button").prop('disabled', false);
+            }
+            $.ajax({
+              url: "{{url('/type')}}?nexttarget="+nexttarget+"&id="+ID,
+              dataType:'json'
+            })
+              .done(function(wida) {
+                if(type == 'all')
+                    var options = '<option value="all">All '+nexttarget+'</option>';
+                else
+                    var options = '<option value="">Choose a '+nexttarget+'</option>';
+
+                wida.forEach(function(e){
+                    options += '<option value="'+e.ID+'">'+e.NAMA+'</option>';
+                });
+                // console.log("masuk");
+                // console.log(options);
+                console.log(document.getElementById(nexttarget).innerHTML);
+                document.getElementById(nexttarget).innerHTML = options; 
+                $('#'+nexttarget).prop('disabled',false);
+            });
+        }
+    }
+    </script>
+@endsection
