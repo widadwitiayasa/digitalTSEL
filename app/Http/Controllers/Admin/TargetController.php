@@ -71,18 +71,18 @@ class TargetController extends Controller
         $idregional = $req->input('INPUTREGIONAL');
         $idbranch = $req->input('INPUTBRANCH');
         $idcluster = $req->input('INPUTCLUSTER');
-        // if($idcluster=='all')
-        // {
+        if($idcluster=='all')
+        {
             $wida = Target::with('cluster')->whereHas('cluster',function ($a) use ($idbranch){
                 $a->where('ID_BRANCH',$idbranch);
             })->get();
-        // }
-        // else
-        // {
-        //     $wida = Target::with('cluster')->whereHas('cluster',function ($a) use ($idbranch){
-        //         $a->where('ID_BRANCH',$idbranch);
-        //     })->where('ID_CLUSTER',$idcluster)->get();
-        // }
+        }
+        else
+        {
+            $wida = Target::with('cluster')->whereHas('cluster',function ($a) use ($idbranch){
+                $a->where('ID_BRANCH',$idbranch);
+            })->where('ID_CLUSTER',$idcluster)->get();
+        }
         $data['area'] = $idarea;
         $data['regional'] = $idregional;
         $data['cluster'] = $idcluster;
