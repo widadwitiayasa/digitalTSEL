@@ -48,25 +48,25 @@
                                     <tr>
                                         <td>{{$r['name']}}</td>
                                 @if($tipe=='L1')
-                                        <td>{{ number_format($r['actual_bulanlalu'], 0, ".", ".") }}</td>
-                                        <td>{{ number_format($r['actual'], 0, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual_bulanlalu'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual'], 4, ".", ".") }}</td>
                                         <td>{{$r['mom']}}{{ '%' }}</td>
                                         <td>{{$r['ytd']}}{{ '%' }}</td>
                                         <td>{{$r['yoy']}}{{ '%' }}</td>
                                 @elseif($tipe=='L2')
-                                        <td>{{ number_format($r['actual_bulanlalu'], 0, ".", ".") }}</td>
-                                        <td>{{ number_format($r['actual'], 0, ".", ".") }}</td>
-                                        <td>{{ number_format($r['target'], 0, ".", ".") }}</td>
-                                        <td>{{ number_format($r['GAP'], 0, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual_bulanlalu'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($r['target'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($r['GAP'], 4, ".", ".") }}</td>
                                         <td>{{$r['achievement']}}{{ '%' }}</td>
                                         <td>{{$r['mom']}}{{ '%' }}</td>
                                         <td>{{$r['ytd']}}{{ '%' }}</td>
                                         <td>{{$r['yoy']}}{{ '%' }}</td>
                                 @else
-                                        <td>{{ number_format($r['actual_bulanlalu'], 0, ".", ".") }}</td>
-                                        <td>{{ number_format($r['actual'], 0, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual_bulanlalu'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual'], 4, ".", ".") }}</td>
                                         <td>{{$r['mom']}}{{ '%' }}</td>
-                                        <td>{{ number_format($r['absolut'], 0, ".", ".")  }}</td>
+                                        <td>{{ number_format($r['absolut'], 4, ".", ".")  }}</td>
                                 @endif
                                     </tr>
                                 @endforeach
@@ -82,7 +82,7 @@ Highcharts.chart('mychart', {
         type: 'bar'
     },
     title: {
-        text: 'TOP V SERVICE AREA 3'
+        text: 'TOP 5 SERVICE'
     },
     // subtitle: {
     //     text: 'Source: <a href="https://en.wikipedia.org/wiki/World_population">Wikipedia.org</a>'
@@ -129,11 +129,11 @@ Highcharts.chart('mychart', {
     },
     series: [{
         name: '{{$result[0][0]['now']}}',
-        data: [@foreach($result[1] as $r) {{$r['mom']}}, @endforeach]
+        data: [@foreach($result[1] as $r) {{$r['actual']}}, @endforeach]
     }, 
     {
         name: '{{$result[0][0]['now_bulanlalu']}}',
-        data: [@foreach($result[1] as $r) {{$r['mom_bulanlalu']}}, @endforeach]
+        data: [@foreach($result[1] as $r) {{$r['actual_bulanlalu']}}, @endforeach]
     }]
     });
 

@@ -50,12 +50,15 @@ class CreateController extends Controller
     		"cluster" => $idcluster,
     		"button" => $button);
     	// dd($detail);
+    	// dd($detail);
 	    $data['result'] = app('App\Http\Controllers\Manager\ReadController')->calculate($detail,$date_formated);
+	    	
 	   	$data['detail'] = $detail;
-	    if($idarea=='all' && $detail['button']=='L1'){
+	   	
+	    if($idarea=='all' && $button=='L1'){
 	    	$data['tipe'] = 'L1';
 	    }
-	    else if($detail['button']=='TOP5'){
+	    else if($button=='TOP5'){
 	    	$data['tipe'] = 'TOP5';
 	    	return view('manager.chart',$data);
 	    }
@@ -66,6 +69,13 @@ class CreateController extends Controller
 	    }
 	    else{
 	    	$data['tipe'] = 'L2';
+	    	$tables = array();
+	    	if($detail['regional'] == 'all') 
+	    		$data['tables'] = ['area', 'regional', 'branch', 'cluster'];
+	    	else if($detail['branch'] == 'all')
+	    		$data['tables'] = ['regional', 'branch', 'cluster'];
+	    	else
+				$data['tables'] = ['branch', 'cluster'];
 	    }
 	    // dd($data['result']);
 	    return view('manager.report',$data);
@@ -99,7 +109,7 @@ class CreateController extends Controller
 				$a->whereHas('branch', function($b) use($ID, $type){
 						$b->whereHas('regional', function($c) use($ID, $type){
 							if($ID != "all")
-								$c->where('ID',$ID);
+							 	$c->where('ID',$ID);
 							else
 								$c->where('ID_AREA',3);
 						});

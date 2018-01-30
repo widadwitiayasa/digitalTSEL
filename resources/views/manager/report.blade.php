@@ -10,83 +10,71 @@
         </div>
         <div class="tm-section tm-bg-img" id="tm-section-1">
             <div class="row">
-                @if($detail['regional']=='all' && ($detail['button']=='L1' || $detail['button']=='L3'))
-                    <!-- <form action="{{url('/download')}}" method="post" class="tm-search-form tm-section-pad-2" enctype="multipart/form-data">
-                        <input type="hidden" value="{{$result[1]}}" name="INPUTRESULT"></input>
-                        <button type="submit" class="btn btn-primary tm-btn-search" style="background-color: #000000">Download as CSV</button>
-                    </form> -->
-                    <!-- <a href="/all-tweets-csv" class="btn btn-primary">Export as CSV</a> -->
-                    <?php for($i = 0; $i<=3; $i++){
-                            if($i == 1) continue;
-                            $judul[0] = 'Regional';
-                            $judul[2] = 'Branch';
-                            $judul[3] = 'Cluster';
-                        ?>
+            @php $count = 0 @endphp
+                @if($detail['button']=='L1')
+                    @foreach($tables as $t)
                     <center>
                     <div class="col-lg-12" style="padding-left: 250px"><br>
-                            <h4>{{$judul[$i]}}</h4>
+                            <h4>{{$t}}</h4>
                             <table class="table table-hover table-bordered table-striped tm-position-relative" style="background-color: #E8E8E8;">
                                 <thead>
                                     <tr>
                                         <th class="tengah">NAMA</th>
-                                    @if($tipe=='L1')
-                                        <th class="tengah">{{date("d-M", strtotime($result[0][0]['now_bulanlalu']))}}</th>
-                                        <th class="tengah">{{date("d-M", strtotime($result[0][0]['now']))}}</th>
-                                        <th class="tengah">MoM</th>
-                                        <th class="tengah">Ytd</th>
-                                        <th class="tengah">YoY</th>
-                                    @elseif($tipe=='L2')
-                                        <th class="tengah">{{date("d-M", strtotime($result[$i][0]['now_bulanlalu']))}}</th>
-                                        <th class="tengah">{{date("d-M", strtotime($result[$i][0]['now']))}}</th>
+                                        <th class="tengah">{{date("d-M", strtotime($result[0]['now_bulanlalu']))}}</th>
+                                        <th class="tengah">{{date("d-M", strtotime($result[0]['now']))}}</th>
+                                    @if($t != 'area')
                                         <th class="tengah">Target</th>
-                                        <th class="tengah">GAP</th>
+                                        <th class="tengah">Gap</th>
                                         <th class="tengah">Achievement</th>
+                                    @endif
                                         <th class="tengah">MoM</th>
                                         <th class="tengah">Ytd</th>
                                         <th class="tengah">YoY</th>
-                                    @else
-                                        <th class="tengah">MoM</th>
-                                        <th class="tengah">Absolut</th>
-                                    @endif
                                         <!-- <th class="tengah">Jumlah</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($result[$i] as $r)
+                                    @if($count == 0)
                                         <tr>
-                                            <td>{{$r['name']}}</td>
-                                    @if($tipe=='L1')
-                                            <td>{{ number_format($r['actual_bulanlalu'], 0, ".", ".") }}</td>
-                                            <td>{{ number_format($r['actual'], 0, ".", ".") }}</td>
-                                            @if($r['mom']) <td style="background-color: red">{{$r['mom']}}{{ '%' }}</td>
-                                            @else <td>{{$r['mom']}}{{ '%' }}</td>
-                                            @endif
-                                            <td>{{$r['ytd']}}{{ '%' }}</td>
-                                            <td>{{$r['yoy']}}{{ '%' }}</td>
-                                    @elseif($tipe=='L2')
-                                            <td>{{ number_format($r['actual_bulanlalu'], 0, ".", ".") }}</td>
-                                            <td>{{ number_format($r['actual'], 0, ".", ".") }}</td>
-                                            <td>{{ number_format($r['target'], 0, ".", ".") }}</td>
-                                            <td>{{ number_format($r['GAP'], 0, ".", ".") }}</td>
-                                            <td>{{ $r['achievement'] }}{{ '%' }}</td>
-                                            @if($r['mom']<0) <td style="background-color: red">{{$r['mom']}}{{ '%' }}</td>
-                                            @else <td>{{$r['mom']}}{{ '%' }}</td>
-                                            @endif
-                                            <td>{{$r['ytd']}}{{ '%' }}</td>
-                                            <td>{{$r['yoy']}}{{ '%' }}</td>
-                                    @else
-                                            <td>{{$r['mom']}}</td>
-                                            @if($r['mom']<0) <td style="background-color: red">{{$r['absolut']}}{{ '%' }}</td>
-                                            @else <td>{{ number_format($r['absolut'], 0, ".", ".") }}</td>
-                                            @endif
+                                        <td>{{$result[0]['name']}}</td>
+                                        <td>{{ number_format($result[0]['actual_bulanlalu'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($result[0]['actual'], 4, ".", ".") }}</td>                      
+                                    @if($t != 'area')
+                                        <td>{{ number_format($result[0]['target'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($result[0]['GAP'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($result[0]['achievement'], 4, ".", ".") }}</td>
                                     @endif
+                                         @if($result[0]['mom']) <td style="background-color: red">{{$result[0]['mom']}}{{ '%' }}</td>
+                                        @else <td>{{$result[0]['mom']}}{{ '%' }}</td>
+                                        @endif
+                                        <td>{{$result[0]['ytd']}}{{ '%' }}</td>
+                                        <td>{{$result[0]['yoy']}}{{ '%' }}</td>
                                         </tr>
+                                    @else
+                                        @foreach($result[$count] as $r)
+                                            <tr>
+                                            <td>{{$r['name']}}</td>
+                                            <td>{{ number_format($r['actual_bulanlalu'], 4, ".", ".") }}</td>
+                                            <td>{{ number_format($r['actual'], 4, ".", ".") }}</td>                      
+                                        @if($t != 'area')
+                                            <td>{{ number_format($r['target'], 4, ".", ".") }}</td>
+                                            <td>{{ number_format($r['GAP'], 4, ".", ".") }}</td>
+                                            <td>{{ number_format($r['achievement'], 4, ".", ".") }}</td>
+                                        @endif
+                                             @if($r['mom']) <td style="background-color: red">{{$r['mom']}}{{ '%' }}</td>
+                                            @else <td>{{$r['mom']}}{{ '%' }}</td>
+                                            @endif
+                                            <td>{{$r['ytd']}}{{ '%' }}</td>
+                                            <td>{{$r['yoy']}}{{ '%' }}</td>
+                                            </tr>
                                         @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                     </div>
                     </center>
-                    <?php } ?>
+                    @php $count++ @endphp
+                @endforeach
 
 
                 @else
@@ -125,18 +113,18 @@
                                         <td>{{$r['name']}}</td>
                                     
                                 @if($tipe=='L1')
-                                        <td>{{ number_format($r['actual_bulanlalu'], 0, ".", ".") }}</td>
-                                        <td>{{ number_format($r['actual'], 0, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual_bulanlalu'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual'], 4, ".", ".") }}</td>
                                         @if($r['mom']<0) <td style="background-color: red">{{$r['mom']}}{{ '%' }}</td>
                                         @else <td>{{$r['mom']}}{{ '%' }}</td>
                                         @endif
                                         <td>{{$r['ytd']}}{{ '%' }}</td>
                                         <td>{{$r['yoy']}}{{ '%' }}</td>
                                 @elseif($tipe=='L2')
-                                        <td>{{ 2 }}</td>
-                                        <td>{{ number_format($r['actual'], 0, ".", ".") }}</td>
-                                        <td>{{ number_format($r['target'], 0, ".", ".") }}</td>
-                                        <td>{{ number_format($r['GAP'], 0, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual_bulanlalu'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($r['target'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($r['GAP'], 4, ".", ".") }}</td>
                                         <td>{{ $r['achievement'] }}{{ '%' }}</td>
                                         @if($r['mom']<0) <td style="background-color: red">{{$r['mom']}}{{ '%' }}</td>
                                         @else <td>{{$r['mom']}}{{ '%' }}</td>
@@ -144,11 +132,11 @@
                                         <td>{{$r['ytd']}}{{ '%' }}</td>
                                         <td>{{$r['yoy']}}{{ '%' }}</td>
                                 @else
-                                        <td>{{ number_format($r['actual_bulanlalu'], 0, ".", ".") }}</td>
-                                        <td>{{ number_format($r['actual'], 0, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual_bulanlalu'], 4, ".", ".") }}</td>
+                                        <td>{{ number_format($r['actual'], 4, ".", ".") }}</td>
                                         <td>{{$r['mom']}}{{ '%' }}</td>
-                                        @if($r['mom']<0) <td style="background-color: red">{{$r['absolut']}}{{ '%' }}</td>
-                                        @else <td>{{ number_format($r['absolut'], 0, ".", ".") }}</td>
+                                        @if($r['mom']<0) <td style="background-color: red">{{ number_format($r['absolut'], 4, ".", ".") }}</td>
+                                        @else <td>{{ number_format($r['absolut'], 4, ".", ".") }}</td>
                                         @endif
                                 @endif
                                     </tr>
