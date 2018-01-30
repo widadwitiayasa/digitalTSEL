@@ -473,8 +473,8 @@ class ReadController extends Controller
 								});
 							});
 						})->whereDate('DATE','>=',$date_data['post'])->whereDate('Date', '<=', $date_data['now'])
-						->get();
-				// dd($service);
+						->groupBy('ID_SERVICE')->get();
+				
 				$all_service_result = array();
 
 				$date_data['skrg']=$date_data['now'];
@@ -512,13 +512,7 @@ class ReadController extends Controller
 						'now'=>$date_data['skrg'],
 						'absolut'=>$absolut
 						);
-					$check = 1;
-					foreach($all_service_result as $r)
-					{
-						if($r['name'] == $temp['name'])	$check = 0;
-					}
-					if($check)
-						array_push($all_service_result,$temp);
+					array_push($all_service_result,$temp);
 				}
 				$all_service_result = collect($all_service_result)->sortBy('actual')->reverse()->toArray();
 				$topv = array_slice($all_service_result, 0, 5, true);
@@ -614,9 +608,10 @@ class ReadController extends Controller
 			//calculate L3 on spesific branch
 			else
 			{
+
 				$service = Revenue::with('fromService')->whereHas('cluster', function($a) use($detail){
 							$a->where('ID_BRANCH',$detail['branch']);
-							})->whereDate('DATE','>=',$date_data['post'])->whereDate('Date', '<=', $date_data['now'])->get();
+							})->whereDate('DATE','>=',$date_data['post'])->whereDate('Date', '<=', $date_data['now'])->groupBy('ID_SERVICE')->get();
 				// print_r($service);
 				// dd($service);
 				$all_service_result = array();
@@ -654,13 +649,9 @@ class ReadController extends Controller
 						'absolut'=>$absolut
 						);
 					$check = 1;
-					foreach($all_service_result as $r)
-					{
-						if($r['name'] == $temp['name'])	$check = 0;
-					}
-					if($check)
-						array_push($all_service_result,$temp);
+					array_push($all_service_result,$temp);
 				}
+				
 				$all_service_result = collect($all_service_result)->sortBy('actual')->reverse()->toArray();
 				$topv = array_slice($all_service_result, 0, 5, true);
 				return ([$all_service_result,$topv]);

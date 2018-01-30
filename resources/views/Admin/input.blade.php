@@ -66,12 +66,13 @@ Digital TSEL - Upload
                                         </div>
                                         <div class="form-group tm-form-element tm-form-element-50">
                                             <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
-                                            <input name="UPLOADDATE" type="text" class="form-control" id="UPLOADDATE" placeholder="Start Date" required>
+                                            <input name="UPLOADDATE" type="text" class="form-control" id="UPLOADDATE" placeholder="Start Date" onchange="console.log('masuk');" required>
                                         </div>
-                                        <div class="form-group tm-form-element tm-form-element-50">
+                                        <div class="form-group tm-form-element tm-form-element-50" id="finishDiv">
                                             <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
                                             <input name="FINISHDATE" type="text" class="form-control" id="FINISHDATE" placeholder="Finish Date" required>
                                         </div>
+                                        <p id="wrong-date" style="color: red;"></p>
                                         <div class="form-row tm-search-form-row">
                                         <div class="form-group tm-form-element tm-form-element-2">
                                             <label for="exampleInputFile">File Upload</label>
@@ -89,9 +90,35 @@ Digital TSEL - Upload
 @section('js')
     <script type="text/javascript">
         $(document).ready(function(){
-            const picker1 = datepicker('#UPLOADDATE');
+            const picker1 = datepicker('#UPLOADDATE', {
+                onSelect: function(elem)
+                {
+                    console.log(elem.dateSelected);
+                    $("#FINISHDATE").remove();
+                    $("#finishDiv").append(`<input name="FINISHDATE" type="text" class="form-control" id="FINISHDATE" placeholder="Finish Date" required>`);
+                    const picker = datepicker('#FINISHDATE', {
+                        minDate: new Date(elem.dateSelected),
+                        onSelect: function(thisElem)
+                        {
+                            if(elem.dateSelected.toString() == thisElem.dateSelected.toString())
+                            {
+                                $("#wrong-date").html('Tanggal tidak valid');
+                            }
+                            else
+                            {
+                                $("#wrong-date").html('');
+                            }
+                        }
+                    });
+                }
+            });
             const picker2 = datepicker('#FINISHDATE');
-        })    
+        })
+        function checkFinish()
+        {
+
+            console.log($("#FINISHDATE").val());
+        }
         function findType(ID,nexttarget,type){
         if(ID == 'all' || ID == '')
         {
