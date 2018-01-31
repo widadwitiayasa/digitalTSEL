@@ -10,6 +10,13 @@ Digital TSEL - Upload
                 <div class="container">
                     <div class="row">
                     <img src="img/TSEL.png" height="70px" width="200px" style="padding: 7px">
+                    <div class="col-sm-3"></div>
+                        <div style="padding-top: 20px">
+                            <button class="btn btn-primary tm-btn-search" type="button" style="background-color: #FFD700; width:200px; height:40px"><a href="{{url('/upload')}}">upload</a></button>
+                            <button class="btn btn-primary tm-btn-search" type="button" style="background-color: #FFD700; width:200px; height:40px"><a href="{{url('/request')}}">request</a></button>
+                            <button class="btn btn-primary tm-btn-search" type="button" style="background-color: #FFD700; width:200px; height:40px"><a href="{{url('/target')}}">target</a></button>
+                        </div>
+                    </div>
                     </div>
                 </div>                
             </header>
@@ -18,7 +25,7 @@ Digital TSEL - Upload
                         <div class="row">
                                 <form action="{{url('/upload')}}" method="post" class="tm-search-form tm-section-pad-2" enctype="multipart/form-data">
                                     <div class="form-row clearfix pl-2 pr-2 tm-fx-col-xs">
-                                        <p class="tm-margin-b-0">Customer</p>
+                                        <p class="tm-margin-b-0">Input Data</p>
                                         {{csrf_field()}}
                                     </div>
                                     <div class="form-row tm-search-form-row">
@@ -102,7 +109,7 @@ Digital TSEL - Upload
                         {
                             if(elem.dateSelected.toString() == thisElem.dateSelected.toString())
                             {
-                                $("#wrong-date").html('Tanggal tidak valid');
+                                $("#wrong-date").html('Date is not valid');
                             }
                             else
                             {
