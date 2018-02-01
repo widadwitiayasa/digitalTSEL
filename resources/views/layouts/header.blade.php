@@ -22,12 +22,7 @@ http://www.tooplate.com/view/2095-level
     <link rel="stylesheet" type="text/css" href="{{asset('css/datepicker.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
     <link rel="stylesheet" href="{{asset('css/tooplate-style.css')}}">
-
-<!--     <div class="row" style="width: 250px;">
-        <button class="btn btn-primary tm-btn-search" type="button" style="background-color: #FFD700"><a href="{{url('/upload')}}">upload bro</a></button>
-        <button class="btn btn-primary tm-btn-search" type="button" style="background-color: #FFD700"><a href="{{url('/upload')}}">upload bro</a></button>
-    </div> -->
-
+    
     <style>
     #mychart {
     height: 400px;

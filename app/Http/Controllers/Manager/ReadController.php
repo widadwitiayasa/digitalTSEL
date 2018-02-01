@@ -170,6 +170,7 @@ class ReadController extends Controller
 
 							$target = $this->getTarget('cluster',$c->ID);
 							$actual = $this->countActual('cluster',$c->ID, $date_data);
+							// echo $actual."     ";
 							$GAP = floatval($target - $actual);
 							$achievement = round((($actual/$target)*100),2);
 							$MOM = $this->countMom('cluster',$c->ID, $date_data);
@@ -196,7 +197,7 @@ class ReadController extends Controller
 							);
 							array_push($all_cluster_result,$temp);	
 						}
-						// dd($clusters);
+						// dd($all_cluster_result);
 						$date_data['now']=$date_data['skrg'];
 						$date_data['post']=$date_data['post_real'];
 
@@ -736,8 +737,9 @@ class ReadController extends Controller
     }
 
     private function countActual($type, $target, $date, $target2=null, $output=null)
-    {
+    {							
     	// dd($target);
+
     		$wida = Revenue::whereHas('cluster', function($a) use($target, $type, $date, $target2, $output){
 				if($type == 'cluster') 
 					{
@@ -771,7 +773,7 @@ class ReadController extends Controller
 						});
 					});
 				})->whereDate('Date','>=',$date['post'])->whereDate('Date','<=',$date['now'])->get();
-			
+			// print_r($wida."      ");
 			$actual = $wida->sum('REVENUE');
 			$actual = floatval($actual/1000000000);
 		return $actual;

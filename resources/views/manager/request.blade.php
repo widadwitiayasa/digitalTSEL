@@ -10,7 +10,7 @@ Digital TSEL - Request
                 <div class="container">
                     <div class="row">
                     <img src="img/TSEL.png" height="70px" width="200px" style="padding: 7px">
-                    <div class="col-sm-3"></div>
+                    <div class="col-sm-2"></div>
                         <div style="padding-top: 20px">
                             <button class="btn btn-primary tm-btn-search" type="button" style="background-color: #FFD700; width:200px; height:40px"><a href="{{url('/upload')}}">upload</a></button>
                             <button class="btn btn-primary tm-btn-search" type="button" style="background-color: #FFD700; width:200px; height:40px"><a href="{{url('/request')}}">request</a></button>
