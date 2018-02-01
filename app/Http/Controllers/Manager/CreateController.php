@@ -65,7 +65,7 @@ class CreateController extends Controller
 	    else if($button=='L3'){
 	    	// dd('masuk');
 	    	$data['tipe'] = 'L3';
-	    	dd($data['result']);
+	    	// dd($data['result']);
 	    }
 	    else{
 	    	$data['tipe'] = 'L2';

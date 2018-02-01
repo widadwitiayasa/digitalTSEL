@@ -46,7 +46,6 @@ class ReadController extends Controller
 		$taun=$date_formated[0];
 		$bulan=$date_formated[1];
 		$tanggal=$date_formated[2];
-
 		$date_data = array(
 			'post' => $taun.'-'.$bulan.'-01',
 			'post2' => ($taun-1).'-'.$bulan.'-01',
@@ -55,11 +54,37 @@ class ReadController extends Controller
 			'ytd1' => $taun.'-01'.'-01',
 			'ytd2' => ($taun-1).'-01'.'-01'
 		);
+		$temp_date = $taun.'-'.$bulan.'-'.$tanggal;
+		if($bulan =='03')
+		{
+			if($tanggal >= 29)
+			{
+				$temp_date = $taun.'-'.$bulan.'-'.$tanggal;
+				$date_data['mom2'] = date_create($temp_date.' last day of last month')->format('Y-m-d');
+				// dd($d->format('Y-m-d'));
+			}
+			else
+			{
+				$date_data['mom2'] = $taun.'-02'.'-'.$tanggal;
+			}
+		}
+		else
+		{
+			if($tanggal == date_create($temp_date.' last day of this month')->format('d'))
+			{
+				$date_data['mom2'] = date_create($temp_date.' last day of last month')->format('Y-m-d');
+			}
+			else
+			{
+				$date_data['mom2'] = $taun.'-'.($bulan-1).'-'.$tanggal;	
+			}
+		}
+
 		//dd($date_now);
 		if($bulan=='01')
 		{
 			$date_data['mom1'] = ($taun-1).'-12'.'-01';
-			$date_data['mom2'] = ($taun-1).'-12'.'-'.$tanggal;
+			// $date_data['mom2'] = ($taun-1).'-12'.'-'.$tanggal;
 
 			//buat nyari mom bulan lalu
 			$date_data['now_bulanlalu'] = ($taun-1).'-12'.'-'.$tanggal;
@@ -70,8 +95,8 @@ class ReadController extends Controller
 		}
 		else
 		{
-			$date_data['mom1'] = $taun.($bulan-1).'-01';
-			$date_data['mom2'] = $taun.($bulan-1).'-'.$tanggal;
+			$date_data['mom1'] = $taun."-".($bulan-1).'-01';
+			// $date_data['mom2'] = $taun."-".($bulan-1).'-'.$tanggal;
 
 			//buat nyari mom bulan lalu
 			$date_data['now_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;
@@ -79,7 +104,6 @@ class ReadController extends Controller
 			$date_data['mom1_bulanlalu'] = $taun.'-'.($bulan-1).'-01';
 			$date_data['mom2_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;
 		}
-		
 		//get all area list
 		if($detail['area']=='all')
 		{
@@ -120,20 +144,21 @@ class ReadController extends Controller
 		//get all regional list in those area selected
 		else if($detail['regional']=='all')
 		{
+
 			if($detail['button']=='L1')
 			{
 				$area = Area::find(3);
-
 				$date_data['skrg']=$date_data['now'];
 				$date_data['post_real']=$date_data['post'];
 				$actual = $this->countActual('area',3, $date_data);
+				
 				$MOM = $this->countMom('area',3, $date_data);
+						$YOY = $this->countYoy('area',3, $date_data);
 				$YTD = $this->countYtd('area',3, $date_data);
-				$YOY = $this->countYoy('area',3, $date_data);
-
 				$date_data['now'] = $date_data['now_bulanlalu'];
 				$date_data['post'] = $date_data['post_bulanlalu'];
 				$actual_bulanlalu = $this->countActual('area', 3, $date_data);
+				
 				$all_area_result = array(
 					'name'=>$area->NAMA,
 					'mom'=>$MOM,
@@ -195,6 +220,7 @@ class ReadController extends Controller
 								'GAP'=>$GAP,
 								'achievement'=>$achievement
 							);
+							echo "name = ".$temp['name']."|| mom = ".$temp['mom']."|| ".$temp['actual']."\r\n";
 							array_push($all_cluster_result,$temp);	
 						}
 						// dd($all_cluster_result);
@@ -892,7 +918,7 @@ class ReadController extends Controller
 				});
 		})->whereDate('Date','>=',$date['post'])->whereDate('Date','<=',$date['now'])->get();
 		$mom1 = $hai->sum('REVENUE');
-		// dd($target);
+		// echo $mom1;
 		$hai2 = Revenue::whereHas('cluster',function($a) use($target, $type, $date, $target2, $output){
 			if($type == 'cluster') 
 				{
@@ -928,7 +954,14 @@ class ReadController extends Controller
 				});
 		})->whereDate('Date','>=',$date['mom1'])->whereDate('Date','<=',$date['mom2'])->get();;
 		$mom2 = $hai2->sum('REVENUE');
-		// dd($mom1.'   '.$mom2);
+		// echo "type  ".$type;
+		// echo "target   ".$target2;
+		// echo "post   ".$date['post'];
+		// echo "mom   ".$date['now'];
+		// echo "mom1   ".$date['mom1'];
+		// echo "mom2   ".$date['mom2'];
+		// echo $date['mom1']."  ".$date['mom2'];
+		// dd($hai2);
 		if($mom2==0) {$MOM=0;}
 		else
 			$MOM = round((($mom1/$mom2)-1)*100,2);

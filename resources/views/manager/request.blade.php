@@ -69,10 +69,10 @@ Digital TSEL - Request
                                             </select>
                                             <i class="fa fa-map-marker fa-fw fa-2x tm-form-element-icon"></i>
                                         </div>
-
+                                        <img src="{{asset('img/Spinner.gif')}}" id="loadingGif" style="display: none; width: 60px; height: 60px;">
                                          <div id="datepickerDiv" class="form-group tm-form-element tm-form-element-100">
-                                            <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
-                                            <input name="REQUESTDATE" type="text" class="form-control" id="UPLOADDATE" placeholder="Request Date" required>
+                                            
+
                                         </div>
 
                                         <button type="submit" class="btn btn-primary tm-btn-search" id="L1Button" name="output" value="L1" disabled>GET L1</button>
@@ -95,7 +95,10 @@ Digital TSEL - Request
                         cekDate('regional', 'all');
                     });
                     function cekDate(type, target)
-                    {
+                    {   
+                        if($("#calendarIcon").remove());
+                        if($("#UPLOADDATE").remove());
+                        $("#loadingGif").show();
                         $.ajax({
                                     url: "{{url('/cekdate')}}?type="+type+"&target="+target,
                                     dataType: 'json'
@@ -107,8 +110,8 @@ Digital TSEL - Request
                                     dates[1]--;
                                     var min_year = new Date().getFullYear();
                                     min_year -= 2;
-                                    $("#UPLOADDATE").remove();
-                                    $("#datepickerDiv").append(`<input name="REQUESTDATE" type="text" class="form-control" id="UPLOADDATE" placeholder="Request Date" required>`);
+                                    $("#loadingGif").hide();
+                                    $("#datepickerDiv").append(`<i class="fa fa-calendar fa-2x tm-form-element-icon" id="calendarIcon"></i><input name="REQUESTDATE" type="text" class="form-control" id="UPLOADDATE" placeholder="Request Date" required>`);
                                     const picker = datepicker('#UPLOADDATE', {
                                         // maxDate: res.lastdate,
                                         maxDate: new Date(dates[0], dates[1], dates[2]),
