@@ -158,7 +158,6 @@ class ReadController extends Controller
 				$date_data['now'] = $date_data['now_bulanlalu'];
 				$date_data['post'] = $date_data['post_bulanlalu'];
 				$actual_bulanlalu = $this->countActual('area', 3, $date_data);
-				
 				$all_area_result = array(
 					'name'=>$area->NAMA,
 					'mom'=>$MOM,
@@ -171,7 +170,6 @@ class ReadController extends Controller
 				);
 				$regionals = Regional::where('ID_AREA',3)->get();
 				$all_regional_result = array();
-
 				$all_branch_result = array();
 				$all_cluster_result = array();
 
@@ -220,7 +218,6 @@ class ReadController extends Controller
 								'GAP'=>$GAP,
 								'achievement'=>$achievement
 							);
-							echo "name = ".$temp['name']."|| mom = ".$temp['mom']."|| ".$temp['actual']."\r\n";
 							array_push($all_cluster_result,$temp);	
 						}
 						// dd($all_cluster_result);
@@ -265,8 +262,6 @@ class ReadController extends Controller
 					$MOM = $this->countMom('regional',$r->ID, $date_data);
 					$YTD = $this->countYtd('regional',$r->ID, $date_data);
 					$YOY = $this->countYoy('regional',$r->ID, $date_data);
-
-					
 
 					$target = $this->getTarget('regional',$r->ID);
 					$actual = $this->countActual('regional',$r->ID, $date_data);
@@ -393,6 +388,7 @@ class ReadController extends Controller
 
 							$target = $this->getTarget('cluster',$c->ID);
 							$actual = $this->countActual('cluster',$c->ID, $date_data);
+
 							$GAP = floatval($target - $actual);
 							$achievement = round((($actual/$target)*100),2);
 							$MOM = $this->countMom('cluster',$c->ID, $date_data);
@@ -764,7 +760,7 @@ class ReadController extends Controller
 
     private function countActual($type, $target, $date, $target2=null, $output=null)
     {							
-    	// dd($target);
+    	// dd($type);
 
     		$wida = Revenue::whereHas('cluster', function($a) use($target, $type, $date, $target2, $output){
 				if($type == 'cluster') 
@@ -799,6 +795,7 @@ class ReadController extends Controller
 						});
 					});
 				})->whereDate('Date','>=',$date['post'])->whereDate('Date','<=',$date['now'])->get();
+    		// dd($wida);
 			// print_r($wida."      ");
 			$actual = $wida->sum('REVENUE');
 			$actual = floatval($actual/1000000000);

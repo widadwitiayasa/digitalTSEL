@@ -77,7 +77,6 @@ class CreateController extends Controller
 	    	else
 				$data['tables'] = ['branch', 'cluster'];
 	    }
-	    // dd($data['result']);
 	    return view('manager.report',$data);
     }
 

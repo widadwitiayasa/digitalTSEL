@@ -49,9 +49,9 @@
                                     @if($t != 'area')
                                         <td>{{ number_format($result[0]['target'], 4, ".", ".") }}</td>
                                         <td>{{ number_format($result[0]['GAP'], 4, ".", ".") }}</td>
-                                        <td>{{ number_format($result[0]['achievement'], 4, ".", ".") }}</td>
+                                        <td>{{ $result[0]['achievement'] }}{{'%'}}</td>
                                     @endif
-                                         @if($result[0]['mom']) <td style="background-color: red">{{$result[0]['mom']}}{{ '%' }}</td>
+                                         @if($result[0]['mom']<0) <td style="background-color: red">{{$result[0]['mom']}}{{ '%' }}</td>
                                         @else <td>{{$result[0]['mom']}}{{ '%' }}</td>
                                         @endif
                                         <td>{{$result[0]['ytd']}}{{ '%' }}</td>
@@ -66,9 +66,9 @@
                                         @if($t != 'area')
                                             <td>{{ number_format($r['target'], 4, ".", ".") }}</td>
                                             <td>{{ number_format($r['GAP'], 4, ".", ".") }}</td>
-                                            <td>{{ number_format($r['achievement'], 4, ".", ".") }}</td>
+                                        <td>{{ $r['achievement'] }}{{'%'}}</td>
                                         @endif
-                                             @if($r['mom']) <td style="background-color: red">{{$r['mom']}}{{ '%' }}</td>
+                                             @if($r['mom']<0) <td style="background-color: red">{{$r['mom']}}{{ '%' }}</td>
                                             @else <td>{{$r['mom']}}{{ '%' }}</td>
                                             @endif
                                             <td>{{$r['ytd']}}{{ '%' }}</td>
