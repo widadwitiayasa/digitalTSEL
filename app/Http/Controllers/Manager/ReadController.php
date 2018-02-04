@@ -104,6 +104,7 @@ class ReadController extends Controller
 			$date_data['mom1_bulanlalu'] = $taun.'-'.($bulan-1).'-01';
 			$date_data['mom2_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;
 		}
+    	$pretime = microtime(true);
 		//get all area list
 		if($detail['area']=='all')
 		{
@@ -150,11 +151,27 @@ class ReadController extends Controller
 				$area = Area::find(3);
 				$date_data['skrg']=$date_data['now'];
 				$date_data['post_real']=$date_data['post'];
-				$actual = $this->countActual('area',3, $date_data);
-				
-				$MOM = $this->countMom('area',3, $date_data);
-						$YOY = $this->countYoy('area',3, $date_data);
-				$YTD = $this->countYtd('area',3, $date_data);
+				// dd($date_data);
+				$actual = DB::select("select countActual('area', 3, '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
+				$MOM = DB::select("select countMom('area', 3, '".$date_data['post']."', '".$date_data['now']."',
+								'".$date_data['mom1']."', '".$date_data['mom2']."', 0, 'L1') as result");
+				$YOY = DB::select("select countYoy('area', 3, '".$date_data['post']."', '".$date_data['now']."',
+								'".$date_data['post2']."', '".$date_data['now2']."') as result");
+				$YTD = DB::select("select countYtd('area', 3, '".$date_data['ytd1']."', '".$date_data['now']."',
+								'".$date_data['ytd2']."', '".$date_data['now2']."') as result");
+			
+				$actual = $actual[0]->result;
+				$MOM = $MOM[0]->result;
+				// dd($YOY);
+				$YOY = $YOY[0]->result;
+				$YTD = $YTD[0]->result;
+				// $actual = $this->countActual('area',3, $date_data);
+				// $MOM = $this->countMom('area',3, $date_data);
+				// $YOY = $this->countYoy('area',3, $date_data);
+				// $YTD = $this->countYtd('area',3, $date_data);
+		
+
+
 				$date_data['now'] = $date_data['now_bulanlalu'];
 				$date_data['post'] = $date_data['post_bulanlalu'];
 				$actual_bulanlalu = $this->countActual('area', 3, $date_data);
@@ -172,8 +189,6 @@ class ReadController extends Controller
 				$all_regional_result = array();
 				$all_branch_result = array();
 				$all_cluster_result = array();
-
-
 				foreach($regionals as $r)
 				{
 					//UNTUK REGIONAL
@@ -192,18 +207,30 @@ class ReadController extends Controller
 							$date_data['post']=$date_data['post_real'];
 
 							$target = $this->getTarget('cluster',$c->ID);
-							$actual = $this->countActual('cluster',$c->ID, $date_data);
-							// echo $actual."     ";
+							$actual = DB::select("select countActual('cluster', '".$c->ID."', '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
+							$MOM = DB::select("select countMom('cluster', '".$c->ID."', '".$date_data['post']."', '".$date_data['now']."',
+								'".$date_data['mom1']."', '".$date_data['mom2']."', 0, 'L1') as result");
+							$YOY = DB::select("select countYoy('cluster', '".$c->ID."', '".$date_data['post']."', '".$date_data['now']."',
+								'".$date_data['post2']."', '".$date_data['now2']."') as result");
+							$YTD = DB::select("select countYtd('cluster', '".$c->ID."', '".$date_data['ytd1']."', '".$date_data['now']."',
+								'".$date_data['ytd2']."', '".$date_data['now2']."') as result");
+							$actual = $actual[0]->result;
+				$MOM = $MOM[0]->result;
+				$YOY = $YOY[0]->result;
+				$YTD = $YTD[0]->result;
+							// $actual = $this->countActual('cluster',$c->ID, $date_data);
+							// $MOM = $this->countMom('cluster',$c->ID, $date_data);
+							// $YOY = $this->countYoy('cluster',$c->ID, $date_data);
+							// $YTD = $this->countYtd('cluster',$c->ID, $date_data);
+
+
 							$GAP = floatval($target - $actual);
 							$achievement = round((($actual/$target)*100),2);
-							$MOM = $this->countMom('cluster',$c->ID, $date_data);
-							$YTD = $this->countYtd('cluster',$c->ID, $date_data);
-							$YOY = $this->countYoy('cluster',$c->ID, $date_data);
-
 							$date_data['now'] = $date_data['now_bulanlalu'];
 							$date_data['post'] = $date_data['post_bulanlalu'];
 
-							$actual_bulanlalu = $this->countActual('cluster', $c->ID, $date_data);
+							$actual_bulanlalu = DB::select("select countActual('cluster', '".$c->ID."', '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
+							$actual_bulanlalu = $actual_bulanlalu[0]->result;
 
 							$temp = array(
 								'name'=>$c['NAMA'],
@@ -220,23 +247,35 @@ class ReadController extends Controller
 							);
 							array_push($all_cluster_result,$temp);	
 						}
+
 						// dd($all_cluster_result);
 						$date_data['now']=$date_data['skrg'];
 						$date_data['post']=$date_data['post_real'];
 
 						$target = $this->getTarget('branch',$b->ID);
-						$actual = $this->countActual('branch',$b->ID, $date_data);
+							$actual = DB::select("select countActual('branch', '".$b->ID."', '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
+							$MOM = DB::select("select countMom('branch', '".$b->ID."', '".$date_data['post']."', '".$date_data['now']."',
+								'".$date_data['mom1']."', '".$date_data['mom2']."', 0, 'L1') as result");
+							$YOY = DB::select("select countYoy('branch', '".$b->ID."', '".$date_data['post']."', '".$date_data['now']."',
+								'".$date_data['post2']."', '".$date_data['now2']."') as result");
+				$YTD = DB::select("select countYtd('branch', '".$b->ID."', '".$date_data['ytd1']."', '".$date_data['now']."',
+								'".$date_data['ytd2']."', '".$date_data['now2']."') as result");
+				$actual = $actual[0]->result;
+				$MOM = $MOM[0]->result;
+				$YOY = $YOY[0]->result;
+				$YTD = $YTD[0]->result;
+						// $actual = $this->countActual('branch',$b->ID, $date_data);
+						// $MOM = $this->countMom('branch',$b->ID, $date_data);
+						// $YOY = $this->countYoy('branch',$b->ID, $date_data);
+						// $YTD = $this->countYtd('branch',$b->ID, $date_data);
+
 						$GAP = floatval($target - $actual);
 						$achievement = round((($actual/$target)*100),2);
-						$MOM = $this->countMom('branch',$b->ID, $date_data);
-						$YTD = $this->countYtd('branch',$b->ID, $date_data);
-						$YOY = $this->countYoy('branch',$b->ID, $date_data);
-
 						$date_data['now'] = $date_data['now_bulanlalu'];
 						$date_data['post'] = $date_data['post_bulanlalu'];
 
-						$actual_bulanlalu = $this->countActual('branch', $b->ID, $date_data);
-
+						$actual_bulanlalu = DB::select("select countActual('branch', '".$b->ID."', '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
+						$actual_bulanlalu = $actual_bulanlalu[0]->result;
 						$temp = array(
 							'name'=>$b['NAMA'],
 							'mom'=>$MOM,
@@ -256,28 +295,40 @@ class ReadController extends Controller
 					$date_data['now']=$date_data['skrg'];
 					$date_data['post']=$date_data['post_real'];
 					$target = $this->getTarget('regional',$r->ID);
-					$actual = $this->countActual('regional',$r->ID, $date_data);
-					$GAP = floatval($target - $actual);
-					$achievement = round((($actual/$target)*100),2);
-					$MOM = $this->countMom('regional',$r->ID, $date_data);
-					$YTD = $this->countYtd('regional',$r->ID, $date_data);
-					$YOY = $this->countYoy('regional',$r->ID, $date_data);
+							$actual = DB::select("select countActual('regional', '".$r->ID."', '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
+							$MOM = DB::select("select countMom('regional', '".$r->ID."', '".$date_data['post']."', '".$date_data['now']."',
+								'".$date_data['mom1']."', '".$date_data['mom2']."', 0, 'L1') as result");
+							$YOY = DB::select("select countYoy('regional', '".$r->ID."', '".$date_data['post']."', '".$date_data['now']."',
+								'".$date_data['post2']."', '".$date_data['now2']."') as result");
+							$YTD = DB::select("select countYtd('regional', '".$r->ID."', '".$date_data['ytd1']."', '".$date_data['now']."',
+								'".$date_data['ytd2']."', '".$date_data['now2']."') as result");
+				$actual = $actual[0]->result;
+				$MOM = $MOM[0]->result;
+				$YOY = $YOY[0]->result;
+				$YTD = $YTD[0]->result;
+					// $actual = $this->countActual('regional',$r->ID, $date_data);
+					// $MOM = $this->countMom('regional',$r->ID, $date_data);
+					// $YOY = $this->countYoy('regional',$r->ID, $date_data);
 
-					$target = $this->getTarget('regional',$r->ID);
-					$actual = $this->countActual('regional',$r->ID, $date_data);
+					// $YTD = $this->countYtd('regional',$r->ID, $date_data);
+
 					$GAP = floatval($target - $actual);
 					$achievement = round((($actual/$target)*100),2);
-					$MOM = $this->countMom('regional',$r->ID, $date_data);
-					$YTD = $this->countYtd('regional',$r->ID, $date_data);
-					$YOY = $this->countYoy('regional',$r->ID, $date_data);
+					$target = $this->getTarget('regional',$r->ID);
+					// $actual = $this->countActual('regional',$r->ID, $date_data);
+					// $GAP = floatval($target - $actual);
+					// $achievement = round((($actual/$target)*100),2);
+					// $MOM = $this->countMom('regional',$r->ID, $date_data);
+					// $YTD = $this->countYtd('regional',$r->ID, $date_data);
+					// $YOY = $this->countYoy('regional',$r->ID, $date_data);
 
 
 					$date_data['now'] = $date_data['now_bulanlalu'];
 					$date_data['post'] = $date_data['post_bulanlalu'];
 
 
-					$actual_bulanlalu = $this->countActual('regional', $r->ID, $date_data);
-					
+					$actual_bulanlalu = DB::select("select countActual('regional', '".$r->ID."', '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
+					$actual_bulanlalu = $actual_bulanlalu[0]->result;
 					$temp = array(
 						'name'=>$r['NAMA'],
 						'mom'=>$MOM,
@@ -294,9 +345,12 @@ class ReadController extends Controller
 					array_push($all_regional_result,$temp);
 
 				}
+
 				$all_regional_result = collect($all_regional_result)->sortBy('mom')->reverse()->toArray();
 				$all_branch_result = collect($all_branch_result)->sortBy('mom')->reverse()->toArray();
 				$all_cluster_result = collect($all_cluster_result)->sortBy('mom')->reverse()->toArray();
+				$postime = microtime(true);
+			    dd(($postime - $pretime));
 				return ([$all_area_result, $all_regional_result, $all_branch_result, $all_cluster_result]);
 			}
 			else
@@ -951,14 +1005,6 @@ class ReadController extends Controller
 				});
 		})->whereDate('Date','>=',$date['mom1'])->whereDate('Date','<=',$date['mom2'])->get();;
 		$mom2 = $hai2->sum('REVENUE');
-		// echo "type  ".$type;
-		// echo "target   ".$target2;
-		// echo "post   ".$date['post'];
-		// echo "mom   ".$date['now'];
-		// echo "mom1   ".$date['mom1'];
-		// echo "mom2   ".$date['mom2'];
-		// echo $date['mom1']."  ".$date['mom2'];
-		// dd($hai2);
 		if($mom2==0) {$MOM=0;}
 		else
 			$MOM = round((($mom1/$mom2)-1)*100,2);
