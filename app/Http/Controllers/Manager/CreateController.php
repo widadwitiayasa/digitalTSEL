@@ -51,8 +51,11 @@ class CreateController extends Controller
     		"button" => $button);
     	// dd($detail);
     	// dd($detail);
+    	    	// $pretime = microtime(true);
 	    $data['result'] = app('App\Http\Controllers\Manager\ReadController')->calculate($detail,$date_formated);
-	    	
+						$postime = microtime(true);
+			    // dd(($postime - $pretime));
+		
 	   	$data['detail'] = $detail;
 	   	
 	    if($idarea=='all' && $button=='L1'){
