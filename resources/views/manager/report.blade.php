@@ -15,7 +15,6 @@
             </div>                
             </header>
         </div>
-
         <div class="tm-section tm-bg-img" id="tm-section-1">
             <div class="row">
             @php $count = 0 @endphp
@@ -131,13 +130,13 @@
                         <table class="table table-hover table-bordered table-striped tm-position-relative" style="background-color: #E8E8E8">
                             <thead>
                                 <tr>
-                                @if(is_array($result[0][0]))
+                                @if(is_array($result))
                                         <th class="tengah">NAMA</th>
                                     @if($tipe=='L1')
                                         <th class="tengah">{{date("d-M", strtotime($result[0][0]['now_bulanlalu']))}}</th>
                                         <th class="tengah">{{date("d-M", strtotime($result[0][0]['now']))}}</th>
                                         <th class="tengah">MoM</th>
-                                        <th class="tengah">Ytd</th>
+                                        <th class="teangah">Ytd</th>
                                         <th class="tengah">YoY</th>
                                     @elseif($tipe=='L2')
                                         <th class="tengah">{{date("d-M", strtotime($result[0][0]['now_bulanlalu']))}}</th>
@@ -182,6 +181,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            <?php if(!is_array($result)) $result = (array)$result; ?>
                                 @foreach($result[0] as $r)
                                     @if(is_array($r))
                                         <tr>

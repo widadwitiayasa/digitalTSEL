@@ -135,7 +135,7 @@ class TargetController extends Controller
         $totaltargetbranch = $targetbranch->sum('TARGET');
         $namaarea = $targetarea[0]->cluster->branch->regional->area->NAMA;
         $namaregional = $targetarea[0]->cluster->branch->regional->NAMA;
-        $namabranch = $targetarea[0]->cluster->branch->NAMA;
+        $namabranch = $targetarea[$idbranch]->cluster->branch->NAMA;
         $wida = array(
             "totaltargetarea" => $totaltargetarea,
             "totaltargetregional" => $totaltargetregional,

@@ -56,28 +56,31 @@ class ReadController extends Controller
 			'ytd2' => ($taun-1).'-01'.'-01'
 		);
 		$temp_date = $taun.'-'.$bulan.'-'.$tanggal;
+		//jadi tanggal mom2_bulanlalu ini ngikut tanggal mom2 atau tanggal aslinya? baca notes
 		if($bulan =='03')
 		{
 			if($tanggal >= 29)
 			{
 				$temp_date = $taun.'-'.$bulan.'-'.$tanggal;
 				$date_data['mom2'] = date_create($temp_date.' last day of last month')->format('Y-m-d');
-				// dd($d->format('Y-m-d'));
 			}
 			else
 			{
 				$date_data['mom2'] = $taun.'-02'.'-'.$tanggal;
 			}
+			$date_data['mom2_bulanlalu'] = $taun.'-01'.'-'.$tanggal;
 		}
 		else
 		{
 			if($tanggal == date_create($temp_date.' last day of this month')->format('d'))
 			{
 				$date_data['mom2'] = date_create($temp_date.' last day of last month')->format('Y-m-d');
+				$date_data['mom2_bulanlalu'] = date_create($date_data['mom2'].'last day of last month')->format('Y-m-d');
 			}
 			else
 			{
-				$date_data['mom2'] = $taun.'-'.($bulan-1).'-'.$tanggal;	
+				$date_data['mom2'] = $taun.'-'.($bulan-1).'-'.$taun;
+				$date_data['mom2_bulanlalu'] = date_create($date_data['mom2'].'last month')->format('Y-m-d');
 			}
 		}
 
@@ -91,7 +94,7 @@ class ReadController extends Controller
 			$date_data['now_bulanlalu'] = ($taun-1).'-12'.'-'.$tanggal;
 			$date_data['post_bulanlalu'] = ($taun-1).'-12'.'-01';
 			$date_data['mom1_bulanlalu'] = ($taun-1).'-11'.'-01';
-			$date_data['mom2_bulanlalu'] = ($taun-1).'-11'.'-'.$tanggal;
+			// $date_data['mom2_bulanlalu'] = ($taun-1).'-11'.'-'.$tanggal;
 			// dd($date_now);
 		}
 		else
@@ -102,8 +105,8 @@ class ReadController extends Controller
 			//buat nyari mom bulan lalu
 			$date_data['now_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;
 			$date_data['post_bulanlalu'] = $taun.'-'.($bulan-1).'-01';
-			$date_data['mom1_bulanlalu'] = $taun.'-'.($bulan-1).'-01';
-			$date_data['mom2_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;
+			$date_data['mom1_bulanlalu'] = $taun.'-'.($bulan-2).'-01';
+			// $date_data['mom2_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;
 		}
 
 		//get all area list
@@ -152,6 +155,7 @@ class ReadController extends Controller
 				$area = Area::find(3);
 				$date_data['skrg']=$date_data['now'];
 				$date_data['post_real']=$date_data['post'];
+				// dd($date_data['now_bulanlalu']);
 				$all_area_result = json_decode(Redis::get('area_L1_result'));
 				if(!$all_area_result)
 				{
@@ -165,12 +169,14 @@ class ReadController extends Controller
 				
 					$actual = $actual[0]->result;
 					$MOM = $MOM[0]->result;
-					// dd($YOY);
 					$YOY = $YOY[0]->result;
 					$YTD = $YTD[0]->result;
-					$date_data['now'] = $date_data['now_bulanlalu'];
+					// $date_data['now'] = $date_data['now_bulanlalu'];
+					$date_data['now'] = $date_data['mom2'];
 					$date_data['post'] = $date_data['post_bulanlalu'];
-					$actual_bulanlalu = $this->countActual('area', 3, $date_data);
+					$actual_bulanlalu = DB::select("select countActual('area', 3, '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
+					$actual_bulanlalu = $actual_bulanlalu[0]->result;
+					// $actual_bulanlalu = $this->countActual('area', 3, $date_data);
 					$all_area_result = array(
 						'name'=>$area->NAMA,
 						'mom'=>$MOM,
@@ -178,10 +184,10 @@ class ReadController extends Controller
 						'actual'=>$actual,
 						'yoy'=>$YOY,
 						'actual_bulanlalu'=>$actual_bulanlalu,
-						'now_bulanlalu'=>$date_data['now_bulanlalu'],
+						'now_bulanlalu'=>$date_data['mom2'],
 						'now'=>$date_data['skrg']
 					);
-					Redis::set('area_L1_result', json_encode($all_area_result));
+					// Redis::set('area_L1_result', json_encode($all_area_result));
 				}
 
 				$regionals = Regional::where('ID_AREA',3)->get();
@@ -212,7 +218,7 @@ class ReadController extends Controller
 								$date_data['now']=$date_data['skrg'];
 								$date_data['post']=$date_data['post_real'];
 
-								$target = $this->getTarget('cluster',$c->ID);
+								$target = $this->getTarget('cluster',1);
 								$actual = DB::select("select countActual('cluster', '".$c->ID."', '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
 								
 								$MOM = DB::select("select countMom('cluster', '".$c->ID."', '".$date_data['post']."', '".$date_data['now']."',
@@ -228,7 +234,8 @@ class ReadController extends Controller
 
 								$GAP = floatval($target - $actual);
 								$achievement = round((($actual/$target)*100),2);
-								$date_data['now'] = $date_data['now_bulanlalu'];
+								// dd($MOM);
+								$date_data['now'] = $date_data['mom2'];
 								$date_data['post'] = $date_data['post_bulanlalu'];
 
 								$actual_bulanlalu = DB::select("select countActual('cluster', '".$c->ID."', '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
@@ -242,7 +249,7 @@ class ReadController extends Controller
 									'yoy'=>$YOY,
 									'target'=>$target,
 									'actual_bulanlalu'=>$actual_bulanlalu,
-									'now_bulanlalu'=>$date_data['now_bulanlalu'],
+									'now_bulanlalu'=>$date_data['mom2'],
 									'now'=>$date_data['skrg'],
 									'GAP'=>$GAP,
 									'achievement'=>$achievement
@@ -269,7 +276,7 @@ class ReadController extends Controller
 
 							$GAP = floatval($target - $actual);
 							$achievement = round((($actual/$target)*100),2);
-							$date_data['now'] = $date_data['now_bulanlalu'];
+							$date_data['now'] = $date_data['mom2'];
 							$date_data['post'] = $date_data['post_bulanlalu'];
 
 							$actual_bulanlalu = DB::select("select countActual('branch', '".$b->ID."', '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
@@ -282,7 +289,7 @@ class ReadController extends Controller
 								'yoy'=>$YOY,
 								'target'=>$target,
 								'actual_bulanlalu'=>$actual_bulanlalu,
-								'now_bulanlalu'=>$date_data['now_bulanlalu'],
+								'now_bulanlalu'=>$date_data['mom2'],
 								'now'=>$date_data['skrg'],
 								'GAP'=>$GAP,
 								'achievement'=>$achievement
@@ -309,7 +316,7 @@ class ReadController extends Controller
 						$achievement = round((($actual/$target)*100),2);
 						$target = $this->getTarget('regional',$r->ID);
 
-						$date_data['now'] = $date_data['now_bulanlalu'];
+						$date_data['now'] = $date_data['mom2'];
 						$date_data['post'] = $date_data['post_bulanlalu'];
 
 
@@ -323,7 +330,7 @@ class ReadController extends Controller
 							'yoy'=>$YOY,
 							'target'=>$target,
 							'actual_bulanlalu'=>$actual_bulanlalu,
-							'now_bulanlalu'=>$date_data['now_bulanlalu'],
+							'now_bulanlalu'=>$date_data['mom2'],
 							'now'=>$date_data['skrg'],
 							'GAP'=>$GAP,
 							'achievement'=>$achievement
@@ -334,9 +341,9 @@ class ReadController extends Controller
 					$all_branch_result = collect($all_branch_result)->sortBy('mom')->reverse()->toArray();
 					$all_cluster_result = collect($all_cluster_result)->sortBy('mom')->reverse()->toArray();
 
-					Redis::set('many_regional_L1_3', json_encode($all_regional_result));
-					Redis::set('many_branch_fromarea_3_L1', json_encode($all_branch_result));
-					Redis::set('many_cluster_fromarea_3_L1', json_encode($all_cluster_result));
+					// Redis::set('many_regional_L1_3', json_encode($all_regional_result));
+					// Redis::set('many_branch_fromarea_3_L1', json_encode($all_branch_result));
+					// Redis::set('many_cluster_fromarea_3_L1', json_encode($all_cluster_result));
 				}
 
 				return ([$all_area_result, $all_regional_result, $all_branch_result, $all_cluster_result]);
@@ -371,7 +378,7 @@ class ReadController extends Controller
 						$date_data['mom2']=$b;
 
 						$name = $s->fromService->NAMA;
-						$actual = DB::select("select countActual('area', '".$detail['area']."', '".$date_data['post']."', '".$date_data['now']."',  '".$s->ID_SERVICE."', '".$detail['button']."' as result");
+						$actual = DB::select("select countActual('area', '".$detail['area']."', '".$date_data['post']."', '".$date_data['now']."',  '".$s->ID_SERVICE."', '".$detail['button']."') as result");
 						$MOM = DB::select("select countMom('area', '".$detail['area']."', '".$date_data['post']."', '".$date_data['now']."',
 									'".$date_data['mom1']."', '".$date_data['mom2']."', '".$s->ID_SERVICE."', '".$detail['button']."') as result");
 						$actual = $actual[0]->result;
@@ -379,26 +386,30 @@ class ReadController extends Controller
 
 						// $actual = $this->countActual('area', $s->ID_SERVICE, $date_data, $detail['area'], $detail['button']);
 						// $MOM = $this->countMom('area', $s->ID_SERVICE, $date_data, $detail['area'], $detail['button']);
-
+						// dd($date_data['mom1_bulanlalu']);
 						$date_data['mom1'] = $date_data['mom1_bulanlalu'];
 						$date_data['mom2'] = $date_data['mom2_bulanlalu'];
-
+						// dd($date_data['mom1']);
 						$date_data['post'] = $date_data['post_bulanlalu'];
-						$date_data['now'] = $date_data['now_bulanlalu'];
-
-						$actual_bulanlalu = DB::select("select countActual('area', '".$detail['area']."', '".$date_data['post']."', '".$date_data['now']."',  '".$s->ID_SERVICE."', '".$detail['button']."' as result");
+						$date_data['now'] = $b;
+						// dd($date_data['mom2']);
+						// dd($date_data);
+						// dd($s->ID_SERVICE);
+						$actual_bulanlalu = DB::select("select countActual('area', '".$detail['area']."', '".$date_data['post']."', '".$date_data['now']."',  '".$s->ID_SERVICE."', '".$detail['button']."') as result");
 						$MOM_bulanlalu = DB::select("select countMom('area', '".$detail['area']."', '".$date_data['post']."', '".$date_data['now']."',
 									'".$date_data['mom1']."', '".$date_data['mom2']."', '".$s->ID_SERVICE."', '".$detail['button']."') as result");
+						// dd($MOM_bulanlalu);
 						$actual_bulanlalu = $actual_bulanlalu[0]->result;
 						$MOM_bulanlalu = $MOM_bulanlalu[0]->result;
 						$absolut = floatval($actual - $actual_bulanlalu);
+						// dd($actual."   ".$actual_bulanlalu);
 						$temp = array(
 							'name'=>$name,
 							'mom'=>$MOM,
 							'actual'=>$actual,
 							'mom_bulanlalu'=>$MOM_bulanlalu,
 							'actual_bulanlalu'=>$actual_bulanlalu,
-							'now_bulanlalu'=>$date_data['now_bulanlalu'],
+							'now_bulanlalu'=>$date_data['now'],
 							'now'=>$date_data['skrg'],
 							'absolut'=>$absolut
 							);
@@ -406,8 +417,8 @@ class ReadController extends Controller
 					}
 					$all_service_result = collect($all_service_result)->sortBy('actual')->reverse()->toArray();
 					$topv = array_slice($all_service_result, 0, 5, true);
-					Redis::set('regional_L3_result', json_encode($all_service_result));
-					Redis::set('regional_topv_result', json_encode($all_service_result));
+					// Redis::set('regional_L3_result', json_encode($all_service_result));
+					// Redis::set('regional_topv_result', json_encode($all_service_result));
 				}
 
 				return ([$all_service_result,$topv]);
