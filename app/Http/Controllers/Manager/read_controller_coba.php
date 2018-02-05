@@ -55,23 +55,17 @@ class ReadController extends Controller
 			'ytd2' => ($taun-1).'-01'.'-01'
 		);
 		$temp_date = $taun.'-'.$bulan.'-'.$tanggal;
-		$temp_date2 = $taun.'-'.($bulan-1).'-'.$tanggal;
 		if($bulan =='03')
 		{
 			if($tanggal >= 29)
 			{
 				$temp_date = $taun.'-'.$bulan.'-'.$tanggal;
 				$date_data['mom2'] = date_create($temp_date.' last day of last month')->format('Y-m-d');
-				$date_data['mom2_bulanlalu'] = date_create($temp_date2.' last day of last month')->format('Y-m-d');
-				$date_data['now_bulanlalu'] = date_create($temp_date.' last day of last month')->format('Y-m-d');
 				// dd($d->format('Y-m-d'));
 			}
 			else
 			{
 				$date_data['mom2'] = $taun.'-02'.'-'.$tanggal;
-				$date_data['mom2_bulanlalu'] = $taun.'-01'.'-'.$tanggal;
-				$date_data['now_bulanlalu'] = $taun.'-02'.'-'.$tanggal;
-
 			}
 		}
 		else
@@ -79,14 +73,10 @@ class ReadController extends Controller
 			if($tanggal == date_create($temp_date.' last day of this month')->format('d'))
 			{
 				$date_data['mom2'] = date_create($temp_date.' last day of last month')->format('Y-m-d');
-				$date_data['mom2_bulanlalu'] = date_create($temp_date2.' last day of last month')->format('Y-m-d');
-				$date_data['now_bulanlalu'] = date_create($temp_date.' last day of last month')->format('Y-m-d');
 			}
 			else
 			{
 				$date_data['mom2'] = $taun.'-'.($bulan-1).'-'.$tanggal;	
-				$date_data['mom2_bulanlalu'] = $taun.'-'.($bulan-2).'-'.$tanggal;
-				$date_data['now_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;	
 			}
 		}
 
@@ -94,25 +84,25 @@ class ReadController extends Controller
 		if($bulan=='01')
 		{
 			$date_data['mom1'] = ($taun-1).'-12'.'-01';
-			$date_data['post_bulanlalu'] = ($taun-1).'-12'.'-01';
-			$date_data['mom1_bulanlalu'] = ($taun-1).'-11'.'-01';
 			// $date_data['mom2'] = ($taun-1).'-12'.'-'.$tanggal;
 
 			//buat nyari mom bulan lalu
 			$date_data['now_bulanlalu'] = ($taun-1).'-12'.'-'.$tanggal;
+			$date_data['post_bulanlalu'] = ($taun-1).'-12'.'-01';
+			$date_data['mom1_bulanlalu'] = ($taun-1).'-11'.'-01';
 			$date_data['mom2_bulanlalu'] = ($taun-1).'-11'.'-'.$tanggal;
 			// dd($date_now);
 		}
 		else
 		{
 			$date_data['mom1'] = $taun."-".($bulan-1).'-01';
-			$date_data['post_bulanlalu'] = $taun.'-'.($bulan-1).'-01';
-			$date_data['mom1_bulanlalu'] = $taun.'-'.($bulan-2).'-01';
 			// $date_data['mom2'] = $taun."-".($bulan-1).'-'.$tanggal;
 
 			//buat nyari mom bulan lalu
-			// $date_data['now_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;
-			// $date_data['mom2_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;
+			$date_data['now_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;
+			$date_data['post_bulanlalu'] = $taun.'-'.($bulan-1).'-01';
+			$date_data['mom1_bulanlalu'] = $taun.'-'.($bulan-1).'-01';
+			$date_data['mom2_bulanlalu'] = $taun.'-'.($bulan-1).'-'.$tanggal;
 		}
 		//get all area list
 		if($detail['area']=='all')
