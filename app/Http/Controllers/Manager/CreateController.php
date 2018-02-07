@@ -57,7 +57,7 @@ class CreateController extends Controller
 			    // dd(($postime - $pretime));
 		
 	   	$data['detail'] = $detail;
-	   	
+	   	// dd((array)$data['result'][0]->0);
 	    if($idarea=='all' && $button=='L1'){
 	    	$data['tipe'] = 'L1';
 	    }
