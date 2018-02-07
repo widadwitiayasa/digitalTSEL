@@ -422,7 +422,7 @@ class ReadController extends Controller
 					$all_service_result = collect($all_service_result)->sortBy('actual')->reverse()->toArray();
 					$topv = array_slice($all_service_result, 0, 5, true);
 					Redis::set('allregionalfromarea'.$detail['area'].'_L3_result', json_encode($all_service_result));
-					Redis::set('allregionalfromarea'.$detail['area'].'_topv_result', json_encode($all_service_result));
+					Redis::set('allregionalfromarea'.$detail['area'].'_topv_result', json_encode($topv));
 					$all_service_result = json_decode(Redis::get('allregionalfromarea'.$detail['area'].'_L3_result'));
 					$topv = json_decode(Redis::get('allregionalfromarea'.$detail['area'].'_topv_result'));
 				}
@@ -698,7 +698,7 @@ class ReadController extends Controller
 					$all_service_result = collect($all_service_result)->sortBy('actual')->reverse()->toArray();
 					$topv = array_slice($all_service_result, 0, 5, true);
 					Redis::set('allbranchfromregional_'.$detail['regional'].'_L3_result', json_encode($all_service_result));
-					Redis::set('allbranchfromregional_'.$detail['regional'].'_topv_result', json_encode($all_service_result));
+					Redis::set('allbranchfromregional_'.$detail['regional'].'_topv_result', json_encode($topv));
 					$all_service_result = json_decode(Redis::get('allbranchfromregional_'.$detail['regional'].'_L3_result'));
 					$topv = json_decode(Redis::get('allbranchfromregional_'.$detail['regional'].'_topv_result'));
 				}
@@ -878,7 +878,7 @@ class ReadController extends Controller
 					$all_service_result = collect($all_service_result)->sortBy('actual')->reverse()->toArray();
 					$topv = array_slice($all_service_result, 0, 5, true);				
 					Redis::set('allclusterfrombranch_'.$detail['branch'].'_L3_result', json_encode($all_service_result));
-					Redis::set('allclusterfrombranch_'.$detail['branch'].'_topv_result', json_encode($all_service_result));
+					Redis::set('allclusterfrombranch_'.$detail['branch'].'_topv_result', json_encode($topv));
 					$all_service_result = json_decode(Redis::get('allclusterfrombranch_'.$detail['branch'].'_L3_result'));
 					$topv = json_decode(Redis::get('allclusterfrombranch_'.$detail['branch'].'_topv_result'));
 				}
