@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Redis;
 use App\Models\Area;
 use App\Models\Regional;
 use App\Models\Branch;
@@ -173,6 +174,7 @@ class CreateController extends Controller
             $header = 1;
         }
         fclose($file);
+        Redis::flushDB();
         return ('sukses');
     }
 }

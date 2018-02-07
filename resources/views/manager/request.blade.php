@@ -91,7 +91,7 @@ Digital TSEL - Request
                 <script type="text/javascript">
                     $(document).ready(function(){
                         findType('all', 'branch', 'all');
-                        const picker = datepicker('#UPLOADDATE');
+                        // const picker = datepicker('#UPLOADDATE');
                         cekDate('regional', 'all');
                     });
                     function cekDate(type, target)
@@ -111,6 +111,7 @@ Digital TSEL - Request
                                     var min_year = new Date().getFullYear();
                                     min_year -= 2;
                                     $("#loadingGif").hide();
+                                    $("#datepickerDiv").html('');
                                     $("#datepickerDiv").append(`<i class="fa fa-calendar fa-2x tm-form-element-icon" id="calendarIcon"></i><input name="REQUESTDATE" type="text" class="form-control" id="UPLOADDATE" placeholder="Request Date" required>`);
                                     const picker = datepicker('#UPLOADDATE', {
                                         // maxDate: res.lastdate,

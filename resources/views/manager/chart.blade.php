@@ -27,14 +27,14 @@
                                 <tr>
                                     <th class="tengah">NAMA</th>
                                 @if($tipe=='L1')
-                                    <th class="tengah">{{date("d-M", strtotime($result[0][0]['now_bulanlalu']))}}</th>
-                                    <th class="tengah">{{date("d-M", strtotime($result[0][0]['now']))}}</th>
+                                    <th class="tengah">{{date("d-M", strtotime($result[0]->{'0'}->now_bulanlalu))}}</th>
+                                    <th class="tengah">{{date("d-M", strtotime($result[0]->{'0'}->now))}}</th>
                                     <th class="tengah">MoM</th>
                                     <th class="tengah">Ytd</th>
                                     <th class="tengah">YoY</th>
                                 @elseif($tipe=='L2')
-                                    <th class="tengah">{{date("d-M", strtotime($result[0][0]['now_bulanlalu']))}}</th>
-                                    <th class="tengah">{{date("d-M", strtotime($result[0][0]['now']))}}</th>
+                                    <th class="tengah">{{date("d-M", strtotime($result[0]->{'0'}->now_bulanlalu))}}</th>
+                                    <th class="tengah">{{date("d-M", strtotime($result[0]->{'0'}->now))}}</th>
                                     <th class="tengah">Target</th>
                                     <th class="tengah">GAP</th>
                                     <th class="tengah">Achievement</th>
@@ -42,8 +42,8 @@
                                     <th class="tengah">Ytd</th>
                                     <th class="tengah">YoY</th>
                                 @else
-                                    <th class="tengah">{{date("d-M", strtotime($result[0][0]['now_bulanlalu']))}}</th>
-                                    <th class="tengah">{{date("d-M", strtotime($result[0][0]['now']))}}</th>
+                                    <th class="tengah">{{date("d-M", strtotime($result[0]->{'0'}->now_bulanlalu))}}</th>
+                                    <th class="tengah">{{date("d-M", strtotime($result[0]->{'0'}->now))}}</th>
                                     <th class="tengah">MoM</th>
                                     <th class="tengah">Absolut</th>
                                 @endif
@@ -51,29 +51,30 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php if(!is_array($result)) $result = (array)$result; ?>
                                 @foreach($result[1] as $r)
                                     <tr>
-                                        <td>{{$r['name']}}</td>
+                                        <td>{{$r->name}}</td>
                                 @if($tipe=='L1')
-                                        <td>{{ number_format($r['actual_bulanlalu'], 4, ".", ".") }}</td>
-                                        <td>{{ number_format($r['actual'], 4, ".", ".") }}</td>
-                                        <td>{{$r['mom']}}{{ '%' }}</td>
-                                        <td>{{$r['ytd']}}{{ '%' }}</td>
-                                        <td>{{$r['yoy']}}{{ '%' }}</td>
+                                        <td>{{ number_format($r->actual_bulanlalu, 2, ".", ".") }}</td>
+                                        <td>{{ number_format($r->actual, 2, ".", ".") }}</td>
+                                        <td>{{$r->mom}}{{ '%' }}</td>
+                                        <td>{{$r->ytd}}{{ '%' }}</td>
+                                        <td>{{$r->yoy}}{{ '%' }}</td>
                                 @elseif($tipe=='L2')
-                                        <td>{{ number_format($r['actual_bulanlalu'], 4, ".", ".") }}</td>
-                                        <td>{{ number_format($r['actual'], 4, ".", ".") }}</td>
-                                        <td>{{ number_format($r['target'], 4, ".", ".") }}</td>
-                                        <td>{{ number_format($r['GAP'], 4, ".", ".") }}</td>
-                                        <td>{{$r['achievement']}}{{ '%' }}</td>
-                                        <td>{{$r['mom']}}{{ '%' }}</td>
-                                        <td>{{$r['ytd']}}{{ '%' }}</td>
-                                        <td>{{$r['yoy']}}{{ '%' }}</td>
+                                        <td>{{ number_format($r->actual_bulanlalu, 2, ".", ".") }}</td>
+                                        <td>{{ number_format($r->actual, 2, ".", ".") }}</td>
+                                        <td>{{ number_format($r->target, 2, ".", ".") }}</td>
+                                        <td>{{ number_format($r->GAP, 2, ".", ".") }}</td>
+                                        <td>{{$r->achievement}}{{ '%' }}</td>
+                                        <td>{{$r->mom}}{{ '%' }}</td>
+                                        <td>{{$r->ytd}}{{ '%' }}</td>
+                                        <td>{{$r->yoy}}{{ '%' }}</td>
                                 @else
-                                        <td>{{ number_format($r['actual_bulanlalu'], 4, ".", ".") }}</td>
-                                        <td>{{ number_format($r['actual'], 4, ".", ".") }}</td>
-                                        <td>{{$r['mom']}}{{ '%' }}</td>
-                                        <td>{{ number_format($r['absolut'], 4, ".", ".")  }}</td>
+                                        <td>{{ number_format($r->actual_bulanlalu, 2, ".", ".") }}</td>
+                                        <td>{{ number_format($r->actual, 2, ".", ".") }}</td>
+                                        <td>{{$r->mom}}{{ '%' }}</td>
+                                        <td>{{ number_format($r->absolut, 2, ".", ".")  }}</td>
                                 @endif
                                     </tr>
                                 @endforeach
@@ -95,7 +96,7 @@ Highcharts.chart('mychart', {
     //     text: 'Source: <a href="https://en.wikipedia.org/wiki/World_population">Wikipedia.org</a>'
     // },
     xAxis: {
-        categories: [@foreach($result[1] as $r) '{{$r['name']}}', @endforeach],
+        categories: [@foreach($result[1] as $r) '{{$r->name}}', @endforeach],
         title: {
             text: null
         }
@@ -103,7 +104,7 @@ Highcharts.chart('mychart', {
     yAxis: {
         min: 0,
         title: {
-            text: 'Population (millions)',
+            text: 'Actual (Milyard)',
             align: 'high'
         },
         labels: {
@@ -111,7 +112,7 @@ Highcharts.chart('mychart', {
         }
     },
     tooltip: {
-        valueSuffix: ' millions'
+        valueSuffix: ' Milyard'
     },
     plotOptions: {
         bar: {
@@ -135,12 +136,12 @@ Highcharts.chart('mychart', {
         enabled: false
     },
     series: [{
-        name: '{{$result[0][0]['now']}}',
-        data: [@foreach($result[1] as $r) {{$r['actual']}}, @endforeach]
+        name: '{{$result[0]->{'0'}->now}}',
+        data: [@foreach($result[1] as $r) {{ number_format($r->actual, 2, ".", ".") }}, @endforeach]
     }, 
     {
-        name: '{{$result[0][0]['now_bulanlalu']}}',
-        data: [@foreach($result[1] as $r) {{$r['actual_bulanlalu']}}, @endforeach]
+        name: '{{$result[0]->{'0'}->now_bulanlalu}}',
+        data: [@foreach($result[1] as $r) {{ number_format($r->actual_bulanlalu, 2, ".", ".") }}, @endforeach]
     }]
     });
 
