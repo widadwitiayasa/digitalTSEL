@@ -139,7 +139,7 @@ class ReadController extends Controller
 				$YTD = $this->countYtd('area', $z->ID, $date_data);
 				$YOY = $this->countYoy('area', $z->ID, $date_data);
 
-				$date_data['now'] = $date_data['now_bulanlalu'];
+				$date_data['now'] = $date_data['mom2'];
 				$date_data['post'] = $date_data['post_bulanlalu'];
 
 				$actual_bulanlalu = $this->countActual('area', $z->ID, $date_data);
@@ -150,7 +150,7 @@ class ReadController extends Controller
 					'ytd'=>$YTD,
 					'actual'=>$actual,
 					'actual_bulanlalu'=>$actual_bulanlalu,
-					'now_bulanlalu'=>$date_data['now_bulanlalu'],
+					'now_bulanlalu'=>$date_data['mom2'],
 					'now'=>$date_data['skrg'],
 					'yoy'=>$YOY
 					);
@@ -169,7 +169,7 @@ class ReadController extends Controller
 				$date_data['skrg']=$date_data['now'];
 				$date_data['post_real']=$date_data['post'];
 				// dd($date_data['now_bulanlalu']);
-				$all_area_result = json_decode(Redis::get('area_L1_result'));
+				$all_area_result = json_decode(Redis::get('area_L1_result_'.$date_data['skrg']));
 				if(!$all_area_result)
 				{
 					$actual = DB::select("select countActual('area', 3, '".$date_data['post']."', '".$date_data['now']."', 0, 'L1') as result");
@@ -200,15 +200,15 @@ class ReadController extends Controller
 						'now_bulanlalu'=>$date_data['mom2'],
 						'now'=>$date_data['skrg']
 					);
-					Redis::set('area_L1_result', json_encode($all_area_result));
-					$all_area_result = json_decode(Redis::get('area_L1_result'));
+					Redis::set('area_L1_result_'.$date_data['skrg'], json_encode($all_area_result));
+					$all_area_result = json_decode(Redis::get('area_L1_result_'.$date_data['skrg']));
 				}
 
 				$regionals = Regional::where('ID_AREA',3)->get();
 
-				$all_regional_result = json_decode(Redis::get('many_regional_L1_3'));
-				$all_branch_result = json_decode(Redis::get('many_branch_fromarea_3_L1'));
-				$all_cluster_result = json_decode(Redis::get('many_cluster_fromarea_3_L1'));
+				$all_regional_result = json_decode(Redis::get('many_regional_fromarea_'.$detail['area'].'_L1_'.$date_data['skrg']));
+				$all_branch_result = json_decode(Redis::get('many_branch_fromarea_'.$detail['area'].'_L1_'.$date_data['skrg']));
+				$all_cluster_result = json_decode(Redis::get('many_cluster_fromarea_'.$detail['area'].'_L1_'.$date_data['skrg']));
 
 				if(!$all_regional_result)	
 				{
@@ -355,20 +355,20 @@ class ReadController extends Controller
 					$all_branch_result = collect($all_branch_result)->sortBy('mom')->reverse()->toArray();
 					$all_cluster_result = collect($all_cluster_result)->sortBy('mom')->reverse()->toArray();
 
-					Redis::set('many_regional_L1_3', json_encode($all_regional_result));
-					Redis::set('many_branch_fromarea_3_L1', json_encode($all_branch_result));
-					Redis::set('many_cluster_fromarea_3_L1', json_encode($all_cluster_result));
-					$all_regional_result = json_decode(Redis::get('many_regional_L1_3'));
-					$all_branch_result = json_decode(Redis::get('many_branch_fromarea_3_L1'));
-					$all_cluster_result = json_decode(Redis::get('many_cluster_fromarea_3_L1'));
+					Redis::set('many_regional_fromarea_'.$detail['area'].'_L1_'.$date_data['skrg'], json_encode($all_regional_result));
+					Redis::set('many_branch_fromarea_'.$detail['area'].'_L1_'.$date_data['skrg'], json_encode($all_branch_result));
+					Redis::set('many_cluster_fromarea_'.$detail['area'].'_L1_'.$date_data['skrg'], json_encode($all_cluster_result));
+					$all_regional_result = json_decode(Redis::get('many_regional_fromarea_'.$detail['area'].'_L1_'.$date_data['skrg']));
+					$all_branch_result = json_decode(Redis::get('many_branch_fromarea_'.$detail['area'].'_L1_'.$date_data['skrg']));
+					$all_cluster_result = json_decode(Redis::get('many_cluster_fromarea_'.$detail['area'].'_L1_'.$date_data['skrg']));
 				}
 
 				return ([$all_area_result, $all_regional_result, $all_branch_result, $all_cluster_result]);
 			}
 			else
 			{
-				$all_service_result = json_decode(Redis::get('allregionalfromarea'.$detail['area'].'_L3_result'));
-				$topv = json_decode(Redis::get('allregionalfromarea'.$detail['area'].'_topv_result'));
+				$all_service_result = json_decode(Redis::get('many_regional_fromarea_'.$detail['area'].'_L3_'.$date_data['now']));
+				$topv = json_decode(Redis::get('many_regional_fromarea_'.$detail['area'].'_topv_'.$date_data['now']));
 				if(!$all_service_result)
 				{
 					$service = Revenue::with('fromService')->whereHas('cluster', function($a) use($detail){
@@ -434,10 +434,10 @@ class ReadController extends Controller
 					}
 					$all_service_result = collect($all_service_result)->sortBy('actual')->reverse()->toArray();
 					$topv = array_slice($all_service_result, 0, 5, true);
-					Redis::set('allregionalfromarea'.$detail['area'].'_L3_result', json_encode($all_service_result));
-					Redis::set('allregionalfromarea'.$detail['area'].'_topv_result', json_encode($topv));
-					$all_service_result = json_decode(Redis::get('allregionalfromarea'.$detail['area'].'_L3_result'));
-					$topv = json_decode(Redis::get('allregionalfromarea'.$detail['area'].'_topv_result'));
+					Redis::set('many_regional_fromarea_'.$detail['area'].'_L3_'.$date_data['now'], json_encode($all_service_result));
+					Redis::set('many_regional_fromarea_'.$detail['area'].'_topv_'.$date_data['now'], json_encode($topv));
+					$all_service_result = json_decode(Redis::get('many_regional_fromarea_'.$detail['area'].'_L3_'.$date_data['now']));
+					$topv = json_decode(Redis::get('many_regional_fromarea_'.$detail['area'].'_topv_'.$date_data['now']));
 				}
 
 				return ([$all_service_result,$topv]);
@@ -456,9 +456,9 @@ class ReadController extends Controller
 
 				$regionals = Regional::where('ID_AREA',3)->get();
 
-				$all_regional_result = json_decode(Redis::get('regional_'.$detail['regional'].'L1_result'));
-				$all_branch_result = json_decode(Redis::get('many_branch_fromregional_'.$detail['regional'].'L1'));
-				$all_cluster_result = json_decode(Redis::get('manu_cluster_fromregional_'.$detail['regional'].'L1'));
+				$all_regional_result = json_decode(Redis::get('regional_'.$detail['regional'].'_L1_'.$date_data['skrg']));
+				$all_branch_result = json_decode(Redis::get('many_branch_fromregional_'.$detail['regional'].'_L1_'.$date_data['skrg']));
+				$all_cluster_result = json_decode(Redis::get('many_cluster_fromregional_'.$detail['regional'].'_L1_'.$date_data['skrg']));
 
 				if(!$all_regional_result)	
 				{
@@ -617,13 +617,14 @@ class ReadController extends Controller
 					$all_branch_result = collect($all_branch_result)->sortBy('mom')->reverse()->toArray();
 					$all_cluster_result = collect($all_cluster_result)->sortBy('mom')->reverse()->toArray();
 
-					Redis::set('regional_'.$detail['regional'].'L1_result', json_encode($all_regional_result));
-					Redis::set('many_branch_fromregional_'.$detail['regional'].'L1', json_encode($all_branch_result));
-					Redis::set('many_cluster_fromregional_'.$detail['regional'].'L1', json_encode($all_cluster_result));
 
-					$all_regional_result = json_decode(Redis::get('regional_'.$detail['regional'].'L1_result'));
-					$all_branch_result = json_decode(Redis::get('many_branch_fromregional_'.$detail['regional'].'L1'));
-					$all_cluster_result = json_decode(Redis::get('manu_cluster_fromregional_'.$detail['regional'].'L1'));
+					Redis::set('regional_'.$detail['regional'].'_L1_'.$date_data['skrg'], json_encode($all_regional_result));
+					Redis::set('many_branch_fromregional_'.$detail['regional'].'_L1_'.$date_data['skrg'], json_encode($all_branch_result));
+					Redis::set('many_cluster_fromregional_'.$detail['regional'].'_L1_'.$date_data['skrg'], json_encode($all_cluster_result));
+
+				$all_regional_result = json_decode(Redis::get('regional_'.$detail['regional'].'_L1_'.$date_data['skrg']));
+				$all_branch_result = json_decode(Redis::get('many_branch_fromregional_'.$detail['regional'].'_L1_'.$date_data['skrg']));
+				$all_cluster_result = json_decode(Redis::get('many_cluster_fromregional_'.$detail['regional'].'_L1_'.$date_data['skrg']));
 
 				}
 				return ([$all_regional_result, $all_branch_result, $all_cluster_result]);
@@ -633,8 +634,9 @@ class ReadController extends Controller
 			//calculate L3 on spesific regional
 			else
 			{
-				$all_service_result = json_decode(Redis::get('allbranchfromregional_'.$detail['regional'].'_L3_result'));
-				$topv = json_decode(Redis::get('allbranchfromregional_'.$detail['regional'].'_topv_result'));
+
+				$all_service_result = json_decode(Redis::get('many_branch_fromregional_'.$detail['regional'].'_L3_'.$date_data['now']));
+				$topv = json_decode(Redis::get('many_branch_fromregional_'.$detail['regional'].'_topv_'.$date_data['now']));
 				if(!$all_service_result)
 				{
 					$service = Revenue::with('fromService')->whereHas('cluster', function($a) use($detail){
@@ -702,7 +704,7 @@ class ReadController extends Controller
 							'actual'=>$actual,
 							'mom_bulanlalu'=>$MOM_bulanlalu,
 							'actual_bulanlalu'=>$actual_bulanlalu,
-							'now_bulanlalu'=>$date_data['mom2'],
+							'now_bulanlalu'=>$b,
 							'now'=>$date_data['skrg'],
 							'absolut'=>$absolut
 							);
@@ -710,10 +712,11 @@ class ReadController extends Controller
 					}
 					$all_service_result = collect($all_service_result)->sortBy('actual')->reverse()->toArray();
 					$topv = array_slice($all_service_result, 0, 5, true);
-					Redis::set('allbranchfromregional_'.$detail['regional'].'_L3_result', json_encode($all_service_result));
-					Redis::set('allbranchfromregional_'.$detail['regional'].'_topv_result', json_encode($topv));
-					$all_service_result = json_decode(Redis::get('allbranchfromregional_'.$detail['regional'].'_L3_result'));
-					$topv = json_decode(Redis::get('allbranchfromregional_'.$detail['regional'].'_topv_result'));
+					Redis::set('many_branch_fromregional_'.$detail['regional'].'_L3_'.$date_data['now'], json_encode($all_service_result));
+					Redis::set('many_branch_fromregional_'.$detail['regional'].'_topv_'.$date_data['now'], json_encode($topv));
+					
+				$all_service_result = json_decode(Redis::get('many_branch_fromregional_'.$detail['regional'].'_L3_'.$date_data['now']));
+				$topv = json_decode(Redis::get('many_branch_fromregional_'.$detail['regional'].'_topv_'.$date_data['now']));
 				}
 				return ([$all_service_result,$topv]);
 			}
@@ -726,12 +729,12 @@ class ReadController extends Controller
 			{
 				$date_data['skrg']=$date_data['now'];
 				$date_data['post_real']=$date_data['post'];
-
 				//UNTUK TIAP BRANCHNYA
 				$branchs = Branch::where('ID',$detail['branch'])->get();
 
-				$all_branch_result = json_decode(Redis::get('many_branch_frombranch_'.$detail['branch'].'L1'));
-				$all_cluster_result = json_decode(Redis::get('many_cluster_frombranch_'.$detail['branch'].'L1'));
+				$all_branch_result = json_decode(Redis::get('branch_'.$detail['branch'].'_L1_'.$date_data['skrg']));
+				$all_cluster_result = json_decode(Redis::get('many_cluster_frombranch_'.$detail['branch'].'L1'.$date_data['skrg']));
+
 				if(!$all_branch_result)
 				{
 					$all_cluster_result = array();
@@ -824,18 +827,20 @@ class ReadController extends Controller
 					}
 
 					$all_cluster_result = collect($all_cluster_result)->sortBy('mom')->reverse()->toArray();
-					Redis::set('many_branch_frombranch_'.$detail['branch'].'L1', json_encode($all_branch_result));
-					Redis::set('many_cluster_frombranch_'.$detail['branch'].'L1', json_encode($all_cluster_result));
-					$all_branch_result = json_decode(Redis::get('many_branch_frombranch_'.$detail['branch'].'L1'));
-					$all_cluster_result = json_decode(Redis::get('many_cluster_frombranch_'.$detail['branch'].'L1'));
+
+					Redis::set('branch_'.$detail['branch'].'_L1_'.$date_data['skrg'], json_encode($all_branch_result));
+					Redis::set('many_cluster_frombranch_'.$detail['branch'].'L1'.$date_data['skrg'], json_encode($all_cluster_result));
+						
+					$all_branch_result = json_decode(Redis::get('branch_'.$detail['branch'].'_L1_'.$date_data['skrg']));
+					$all_cluster_result = json_decode(Redis::get('many_cluster_frombranch_'.$detail['branch'].'L1'.$date_data['skrg']));
 				}
 				return ([$all_branch_result, $all_cluster_result]);
 			}
 			//calculate L3 on spesific branch
 			else
 			{
-				$all_service_result = json_decode(Redis::get('allclusterfrombranch_'.$detail['branch'].'_L3_result'));
-				$topv = json_decode(Redis::get('allclusterfrombranch_'.$detail['branch'].'_topv_result'));
+				$all_service_result = json_decode(Redis::get('many_cluster_fromregional_'.$detail['branch'].'_L3_'.$date_data['now']));
+				$topv = json_decode(Redis::get('many_cluster_fromregional_'.$detail['branch'].'_topv_'.$date_data['now']));
 				if(!$all_service_result)
 				{
 					$service = Revenue::with('fromService')->whereHas('cluster', function($a) use($detail){
@@ -881,7 +886,7 @@ class ReadController extends Controller
 							'actual'=>$actual,
 							'mom_bulanlalu'=>$MOM_bulanlalu,
 							'actual_bulanlalu'=>$actual_bulanlalu,
-							'now_bulanlalu'=>$date_data['mom2'],
+							'now_bulanlalu'=>$b,
 							'now'=>$date_data['skrg'],
 							'absolut'=>$absolut
 							);
@@ -889,11 +894,13 @@ class ReadController extends Controller
 					}
 					
 					$all_service_result = collect($all_service_result)->sortBy('actual')->reverse()->toArray();
-					$topv = array_slice($all_service_result, 0, 5, true);				
-					Redis::set('allclusterfrombranch_'.$detail['branch'].'_L3_result', json_encode($all_service_result));
-					Redis::set('allclusterfrombranch_'.$detail['branch'].'_topv_result', json_encode($topv));
-					$all_service_result = json_decode(Redis::get('allclusterfrombranch_'.$detail['branch'].'_L3_result'));
-					$topv = json_decode(Redis::get('allclusterfrombranch_'.$detail['branch'].'_topv_result'));
+					$topv = array_slice($all_service_result, 0, 5, true);			
+
+					Redis::set('many_cluster_fromregional_'.$detail['branch'].'_L3_'.$date_data['now'], json_encode($all_service_result));
+					Redis::set('many_cluster_fromregional_'.$detail['branch'].'_topv_'.$date_data['now'], json_encode($topv));
+					
+				$all_service_result = json_decode(Redis::get('many_cluster_fromregional_'.$detail['branch'].'_L3_'.$date_data['now']));
+				$topv = json_decode(Redis::get('many_cluster_fromregional_'.$detail['branch'].'_topv_'.$date_data['now']));
 				}
 				return ([$all_service_result,$topv]);
 			}	
@@ -902,8 +909,8 @@ class ReadController extends Controller
 		else
 		{			
 			// dd($detail['cluster']);
-			$all_service_result = json_decode(Redis::get('specific_cluster_'.$detail['cluster'].'_L3_result'));
-			$topv = json_decode(Redis::get('specific_cluster_'.$detail['cluster'].'_topv_result'));
+			$all_service_result = json_decode(Redis::get('specific_cluster_'.$detail['cluster'].'_'.$date_data['now'].'_L3_result'));
+			$topv = json_decode(Redis::get('specific_cluster_'.$detail['cluster'].'_'.$date_data['now'].'_topv_result'));
 			if(!$all_service_result)
 			{
 				$service = Revenue::with('fromService')->whereDate('DATE','>=',$date_data['post'])->whereDate('Date', '<=', $date_data['now'])->where('ID_CLUSTER',$detail['cluster'])->groupBy('ID_SERVICE')->get();
@@ -956,10 +963,10 @@ class ReadController extends Controller
 				}
 				$all_service_result = collect($all_service_result)->sortBy('actual')->reverse()->toArray();
 				$topv = array_slice($all_service_result, 0, 5, true);
-				Redis::set('specific_cluster_'.$detail['cluster'].'_L3_result', json_encode($all_service_result));
-				Redis::set('specific_cluster_'.$detail['cluster'].'_topv_result', json_encode($topv));
-				$all_service_result = json_decode(Redis::get('specific_cluster_'.$detail['cluster'].'_L3_result'));
-				$topv = json_decode(Redis::get('specific_cluster_'.$detail['cluster'].'_topv_result'));
+				Redis::set('specific_cluster_'.$detail['cluster'].'_'.$date_data['now'].'_L3_result', json_encode($all_service_result));
+				Redis::set('specific_cluster_'.$detail['cluster'].'_'.$date_data['now'].'_topv_result', json_encode($topv));
+			$all_service_result = json_decode(Redis::get('specific_cluster_'.$detail['cluster'].'_'.$date_data['now'].'_L3_result'));
+			$topv = json_decode(Redis::get('specific_cluster_'.$detail['cluster'].'_'.$date_data['now'].'_topv_result'));
 			}
 			// dd($all_service_result);
 			return ([$all_service_result,$topv]);

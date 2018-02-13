@@ -17,7 +17,7 @@
         </div>
 
         <div class="tm-section tm-bg-img" id="tm-section-1">
-            <div class="row">
+            <div class="row">   
             @php $count = 0 @endphp
                 @if($detail['button']=='L1')
                     @foreach($tables as $t)
@@ -144,7 +144,7 @@
                                             <td>{{ number_format($r->actual_bulanlalu, 2, ".", ".") }}</td>
                                             <td>{{ number_format($r->actual, 2, ".", ".") }}</td>
                                             <td>{{$r->mom}}{{ '%' }}</td>
-                                            @if($r->mom<0) <td style="background-color: red">{{ number_format($r->absolut, 4, ".", ".") }}</td>
+                                            @if($r->mom<0) <td style="background-color: red">{{ number_format($r->absolut, 2, ".", ".") }}</td>
                                             @else <td>{{ number_format($r->absolut, 2, ".", ".") }}</td>
                                             @endif
                                         @endif
